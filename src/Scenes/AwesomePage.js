@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, Modal, Pressable, Alert, Dimensions  } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, Modal, Pressable, Alert, Dimensions, TextInput  } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ButtonDoacao from "../Components/ButtonDoacao"
@@ -57,6 +57,7 @@ const AwesomePage = () => {
 		return (
 			<Image style={styles.avatarEntidades}
 	         source={item.id}
+	         resizeMode='contain'
 	      />	
 		)
 	}
@@ -69,12 +70,19 @@ const AwesomePage = () => {
 		)
 	}
 
+	function renderSearchBar(props){
+		return(
+			<TextInput  {...props} style={{height: 50, backgroundColor: '#F8F8F8', borderRadius: 10 }}/>
+		)
+	}
+
 	return (
 		<View style={{flex: 1}}>
-		<ScrollView style={{flex:1}}>
+		<ScrollView style={{flex:1, backgroundColor: '#FFF'}}>
 			<View style={styles.containerSearchBar}>
 				<Autocomplete
-	      		inputContainerStyle={styles.inputContainerStyle}
+	      		inputContainerStyle={{marginLeft: 10, borderRadius: 10}}
+	      		renderTextInput={renderSearchBar}
 	      		data={data.length === 1 && comp(query, data[0]) ? [] : data}
 	      		defaultValue={query}
 	      		placeholder={"Procure uma entidade"}
@@ -119,8 +127,6 @@ const AwesomePage = () => {
 		        	horizontal={true} 
 		      />
     		</View>
-    		<View style={styles.viewButton}>
-    		</View>
 	    		<Modal
 			      animationType="slide"
 			      transparent={true}
@@ -133,8 +139,8 @@ const AwesomePage = () => {
 		         	</View>
 		         </View>	
 	      	</Modal>
+	      	<ButtonDoacao callback={callbackFuncao} />
 		</ScrollView>
-		<ButtonDoacao callback={callbackFuncao} />
 		</View>
 	)
 }
@@ -148,7 +154,8 @@ const styles = StyleSheet.create({
 	inputContainerStyle:{ 
 		//borderColor: "#edbc00",
 		marginLeft: 10,
-		borderRadius: 1
+		borderRadius: 1,
+		backgroundColor: '#CCC'
 	},
 	avatar: {
       height: 55, 
@@ -197,7 +204,7 @@ const styles = StyleSheet.create({
     	justifyContent: "flex-end"
   	},
   	modalView: {
-  		height: windowHeight-64,
+  		//height: windowHeight-64,
     	backgroundColor: "white",
     	borderTopLeftRadius: 20,
     	borderTopRightRadius: 20,
