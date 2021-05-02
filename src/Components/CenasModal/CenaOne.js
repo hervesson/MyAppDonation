@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { View, Text, Image, StyleSheet, ScrollView, Dimensions, TouchableOpacity} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { Slider } from 'react-native';
+import Slider from '@react-native-community/slider';
 
 const windowWidth = Dimensions.get('window').width;
 
-const ModalDoacao = () => {
+const ModalDoacao = (props) => {
 	const [selectedLanguage, setSelectedLanguage] = useState("Selecione a entidade");
 	const [weight, setWeight] = useState(1);
 	const [valorFinal, setValorFInal] = useState(35)
@@ -57,7 +57,7 @@ const ModalDoacao = () => {
       			<Image 
 	            	source={require('../../Assets/Images/umaCesta.png')}
 	         	/>
-	         	<Text style={styles.numberCestas}>{weight} cestas básica</Text>
+	         	<Text style={styles.numberCestas}>{weight}x cestas básica</Text>
 	         	<Image 
 	            	source={require('../../Assets/Images/duasCestas.png')}
 	         	/>
@@ -87,7 +87,7 @@ const ModalDoacao = () => {
 						,00
 					</Text>
 				</View>
-				<TouchableOpacity style={styles.container}>
+				<TouchableOpacity style={styles.container} onPress={() => { props.callback("cenaDois")}}>
                <Text style={styles.texto}>
                   Confirmar Doação
                </Text>
