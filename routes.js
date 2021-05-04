@@ -11,6 +11,7 @@ import Subscribe from "./src/Scenes/Subscribe"
 
 
 import AwesomePage from "./src/Scenes/AwesomePage";
+import DetalhesEntidade from "./src/Scenes/DetalhesEntidade";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -30,7 +31,8 @@ export const SignedInRoutes = () => {
   return (
     <NavigationContainer>
       <Drawer.Navigator initialRouteName="AwesomePage" drawerContent={props => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen name="Notifications" component={AwesomePage} />
+        <Drawer.Screen name="AwesomePage" component={AwesomePage} />
+        <Drawer.Screen name="DetalhesEntidade" component={DetalhesEntidade} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
