@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, Modal, Pressable, Alert, Dimensions, TextInput  } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, Modal, Pressable, Alert, Dimensions, TextInput, TouchableOpacity  } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ButtonDoacao from "../Components/ButtonDoacao"
@@ -8,7 +8,7 @@ import DonateRoutes from "../Components/ModalDoacao"
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const AwesomePage = () => {
+const AwesomePage = ({ navigation }) => {
 	const [query, setQuery] = useState("")
 	const [Profissoes, setProfissoes] = useState([]);
 	const [modalVisible, setModalVisible] = useState(false);
@@ -55,18 +55,23 @@ const AwesomePage = () => {
 
 	renderEntidade = ({item, index}) => {
 		return (
+			<TouchableOpacity onPress={() =>  navigation.navigate('DetalhesEntidade')}>
 			<Image style={styles.avatarEntidades}
+				resizeMode='stretch'
 	         source={item.id}
 	         resizeMode='contain'
 	      />	
+	      </TouchableOpacity>
 		)
 	}
 
 	renderAgenda = ({item, index}) => {
 		return (
-			<Image style={styles.avatarAgenda}
-	         source={item.id}
-	      />	
+			<TouchableOpacity onPress={() => alert(index)}>
+				<Image style={styles.avatarAgenda}
+		         source={item.id}
+		      />	
+		   </TouchableOpacity>   
 		)
 	}
 
