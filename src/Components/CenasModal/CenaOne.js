@@ -8,10 +8,10 @@ const windowWidth = Dimensions.get('window').width;
 const ModalDoacao = (props) => {
 	const [selectedLanguage, setSelectedLanguage] = useState("Selecione a entidade");
 	const [weight, setWeight] = useState(1);
-	const [valorFinal, setValorFInal] = useState(35)
+	const [valorFinal, setValorFInal] = useState(45)
 	
 	const valorCalculate = () => {
-    	const valor = weight*35;
+    	const valor = weight*45;
     	setValorFInal(valor)
   	};
 
@@ -29,8 +29,9 @@ const ModalDoacao = (props) => {
 						onValueChange={(itemValue, itemIndex) =>
 						   setSelectedLanguage(itemValue)
 						}>
-						<Picker.Item label="Java" value="java" />
-						<Picker.Item label="JavaScript" value="js" />
+						<Picker.Item label="Lar Beneficente Santo Antonio" value="Lar Beneficente Santo Antonio" />
+						<Picker.Item label="Lar de Maria" value="Lar de Maria" />
+						<Picker.Item label="Paz e bem!" value="Paz e bem!" />
 					</Picker>
       		</View>
       		<View style={styles.containerEntidade}>
