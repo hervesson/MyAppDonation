@@ -31,14 +31,16 @@ const CenaFour = () => {
       			style={styles.txtValues}
 			      value={valueInput}
 			      underlineColorAndroid={"#707070"}
+			      editable={false}
 			   />
 			   <Text style={styles.label}>
       			Beneficiado:
       		</Text>
       		<TextInput
       			style={styles.txtValues}
-			      value={valueInput1}
-			      underlineColorAndroid={"#707070"}
+			    	value={valueInput1}
+			     	underlineColorAndroid={"#707070"}
+			     	editable={false}
 			   />
       	</View>
       	<View style={styles.containerDinheiro}>
