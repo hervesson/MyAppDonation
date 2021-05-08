@@ -1,12 +1,18 @@
 import * as React from 'react';
-import { View, Text, Button, StyleSheet, Image } from 'react-native';
+import { View, Text, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import {  DrawerActions } from '@react-navigation/native';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/Ionicons';
+import auth from '@react-native-firebase/auth';
 
 function CustomDrawerContent(props) {
-  return (
-    <DrawerContentScrollView {...props}>
+
+   function SignOut(argument) {
+      auth().signOut().then(() => console.log('User signed out!'));
+   }
+
+   return (
+      <DrawerContentScrollView {...props}>
       <View>
          <View style={styles.containerInfomation}>
             <View style={styles.containerUser}>
@@ -47,9 +53,15 @@ function CustomDrawerContent(props) {
               Configurações de Conta
             </Text>
          </View> 
+         <TouchableOpacity style={styles.itemMenu} onPress={() => SignOut()}>
+            <Icon name="log-out-outline" size={30} color="#F7344B" />
+            <Text style={styles.textMenu}>
+              Sair
+            </Text>
+         </TouchableOpacity> 
       </View>   
-    </DrawerContentScrollView>
-  );
+      </DrawerContentScrollView>
+   );
 }
 
 const styles = StyleSheet.create({
