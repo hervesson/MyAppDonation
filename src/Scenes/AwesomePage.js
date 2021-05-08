@@ -9,9 +9,6 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const AwesomePage = ({ navigation }) => {
-	const [query, setQuery] = useState("")
-	const [Profissoes, setProfissoes] = useState([]);
-	const [modalVisible, setModalVisible] = useState(false);
 
   	const ENTIDADES = [
 	  	{
@@ -40,18 +37,8 @@ const AwesomePage = ({ navigation }) => {
 	  	}
 	];
 
-	function _filterData(query) {
-    	if (query === ''){
-      	return [];
-    	}
-    	const regex = new RegExp(`${query.trim()}`, 'i');
-    	return Profissoes.filter(Profissoes => Profissoes.search(regex) >= 0);
-  	}
 
-  	const data = _filterData(query);
-  	const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
-
-  	callbackFuncao = () => {setModalVisible(true)};
+  	callbackFuncao = () => { navigation.navigate('ListEntidade', {doacao: true}) };
 
 	renderEntidade = ({item, index}) => {
 		return (
@@ -75,30 +62,15 @@ const AwesomePage = ({ navigation }) => {
 		)
 	}
 
-	function renderSearchBar(props){
-		return(
-			<TextInput  {...props} style={{height: 50, backgroundColor: '#F8F8F8', borderRadius: 10 }}/>
-		)
-	}
-
 	return (
 		<View style={{flex: 1}}>
 		<ScrollView style={{flex:1, backgroundColor: '#FFF'}}>
 			<View style={styles.containerSearchBar}>
-				<Autocomplete
-	      		inputContainerStyle={{marginLeft: 10, borderRadius: 10}}
-	      		renderTextInput={renderSearchBar}
-	      		data={data.length === 1 && comp(query, data[0]) ? [] : data}
-	      		defaultValue={query}
-	      		placeholder={"Procure uma entidade"}
-	      		onChangeText={text => () => setQuery( item )}
-	      		keyExtractor= {(item, index) => item}
-	      		renderItem={({ item, i }) => (
-		        		<TouchableOpacity onPress={() => setQuery( item )}>
-		          		<Text style={{fontSize: 20}}>{item}</Text>
-		        		</TouchableOpacity>
-	      		)}
-	    		/>
+				<TouchableOpacity style={styles.searchBar} onPress={() => navigation.navigate('ListEntidade', {doacao: false})}>
+					<Text style={styles.placeholder}>
+					 	Procure uma entidade
+					</Text>
+				</TouchableOpacity>
 	    		<Image style={styles.avatar}
                source={require('../Assets/Images/avatar.jpg')}
             />
@@ -108,10 +80,10 @@ const AwesomePage = ({ navigation }) => {
 	            source={require('../Assets/Images/banner.png')}
 	         />	
          </View>
-         <View style={styles.titulo}>
+         <TouchableOpacity style={styles.titulo} onPress={() => navigation.navigate("ListEntidade", {doacao: false})}>
          	<Text style={styles.textTitulo}>Entidades</Text>
          	<Icon name="arrow-forward-outline" size={23} color="black" />
-         </View>
+         </TouchableOpacity>
          <View style={styles.containerFlatList}>
 		      <FlatList
 		        	data={ENTIDADES}
@@ -120,10 +92,10 @@ const AwesomePage = ({ navigation }) => {
 		        	horizontal={true} 
 		      />
     		</View>
-    		<View style={styles.titulo}>
+    		<TouchableOpacity style={styles.titulo} onPress={() => navigation.navigate("ListAgenda", {doacao: false})}>
          	<Text style={styles.textTitulo}>Agenda</Text>
          	<Icon name="chevron-forward-outline" size={23} color="black" />
-         </View>
+         </TouchableOpacity>
          <View style={styles.containerFlatList}>
 		      <FlatList
 		        	data={AGENDA}
@@ -132,19 +104,7 @@ const AwesomePage = ({ navigation }) => {
 		        	horizontal={true} 
 		      />
     		</View>
-	    		<Modal
-			      animationType="slide"
-			      transparent={true}
-			      visible={modalVisible}
-			      onRequestClose={() => { setModalVisible(!modalVisible) }}
-			   >
-			      <View style={styles.centeredView}>
-          			<View style={styles.modalView}>
-		         		<DonateRoutes />
-		         	</View>
-		         </View>	
-	      	</Modal>
-	      	<ButtonDoacao callback={callbackFuncao} />
+	      <ButtonDoacao callback={callbackFuncao} />
 		</ScrollView>
 		</View>
 	)
@@ -156,6 +116,21 @@ const styles = StyleSheet.create({
 		flexDirection: 'row', 
 		alignItems:'center'  
 	},
+	searchBar: {
+		height: 50, 
+		backgroundColor: '#F8F8F8', 
+		borderRadius: 10, 
+		marginLeft: 10, 
+		borderRadius: 10, 
+		flex: 1,
+		justifyContent: "center", 
+		paddingLeft: 10, 
+		//borderColor: '#707070', 
+		//borderWidth: 1  
+	},
+	placeholder: {
+		fontFamily: 'Open Sans Light'
+	},
 	inputContainerStyle:{ 
 		//borderColor: "#edbc00",
 		marginLeft: 10,
@@ -163,8 +138,8 @@ const styles = StyleSheet.create({
 		backgroundColor: '#CCC'
 	},
 	avatar: {
-      height: 55, 
-      width: 55, 
+      height: 45, 
+      width: 45, 
       borderRadius: 45, 
       marginHorizontal: 10
    },
@@ -185,7 +160,7 @@ const styles = StyleSheet.create({
    	marginHorizontal: 10
    },
    textTitulo: {
-   	fontFamily: "Open Sans ExtraBold",
+   	fontFamily: "Open Sans Bold",
    	fontSize: 13
    },
    containerFlatList: {
@@ -199,29 +174,26 @@ const styles = StyleSheet.create({
    avatarAgenda: {
    	height: 150,
    	width: 154,
-   	marginHorizontal: 3
+   	marginHorizontal: 6
    },
    viewButton: {
    	height: 107
-   },
-  	centeredView: {
-    	flex: 1,
-    	justifyContent: "flex-end"
-  	},
-  	modalView: {
-  		//height: windowHeight-64,
-    	backgroundColor: "white",
-    	borderTopLeftRadius: 20,
-    	borderTopRightRadius: 20,
-    	shadowColor: "#000",
-    	shadowOffset: {
-      	width: 0,
-      	height: 2
-    	},
-    	shadowOpacity: 0.25,
-    	shadowRadius: 4,
-    	elevation: 5
-  	},
+   }
 })
 
 export default AwesomePage
+
+{/*<Autocomplete
+	      		inputContainerStyle={{marginLeft: 10, borderRadius: 10}}
+	      		renderTextInput={renderSearchBar}
+	      		data={data.length === 1 && comp(query, data[0]) ? [] : data}
+	      		defaultValue={query}
+	      		placeholder={"Procure uma entidade"}
+	      		onChangeText={text => () => setQuery( item )}
+	      		keyExtractor= {(item, index) => item}
+	      		renderItem={({ item, i }) => (
+		        		<TouchableOpacity onPress={() => setQuery( item )}>
+		          		<Text style={{fontSize: 20}}>{item}</Text>
+		        		</TouchableOpacity>
+	      		)}
+	    		/>*/}
