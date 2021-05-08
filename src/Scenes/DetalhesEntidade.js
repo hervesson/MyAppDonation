@@ -1,19 +1,13 @@
 import React, { useState, useCallback } from 'react'
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView, PixelRatio, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, PixelRatio, Button, TouchableOpacity, Modal } from 'react-native';
 import YoutubePlayer from "react-native-youtube-iframe";
+import DonateRoutes from "../Components/ModalDoacao"
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const DetalhesEntidade = () => {
-	const [error, setError] = useState(null)
-	const [isReady, setIsReady] = useState(false)
-	const [status, setStatus] = useState(null)
-	const [quality, setQuality] = useState(null)
-	const [isPlaying, setIsPaying] = useState(true)
-	const [isLooping, setIsLooping] = useState(true)
-	const [fullscreen, setFullscreen] = useState(false)
-	const [currentTime, setCurrentTime] = useState(0)
+const DetalhesEntidade = ({  route, navigation  }) => {
+	const [modalVisible, setModalVisible] = useState(false);
 
 	const [playing, setPlaying] = useState(false);
 
@@ -28,6 +22,8 @@ const DetalhesEntidade = () => {
     	setPlaying((prev) => !prev);
   	}, []);	
 
+  	const { item } = route.params;
+
 	return (
 		<ScrollView style={{flex: 1}}>
 			<Image style={styles.banner}
@@ -35,7 +31,7 @@ const DetalhesEntidade = () => {
 	         source={require('../Assets/Images/bannerBig.png')}
 	      />
 	      <ScrollView style={styles.containerDetalhes}>
-	      	<Text style={styles.txtDetalhes}>Lar Beneficente Santo Antônio</Text>
+	      	<Text style={styles.txtDetalhes}>{item.title}</Text>
 	      	<View style={styles.container}>
 		      	<Text style={styles.txtDetalhes1}>
 		      		Lorem ipsum dolor sit amet, 
@@ -68,7 +64,7 @@ const DetalhesEntidade = () => {
 	               Compartilhar Entidade
 	            </Text>
          	</TouchableOpacity>
-         	<TouchableOpacity style={styles.containerButton1}>
+         	<TouchableOpacity style={styles.containerButton1} onPress={() => setModalVisible(true)}>
 	            <Text style={styles.txtDoacao}>
 	               Fazer Doação
 	            </Text>
@@ -76,8 +72,20 @@ const DetalhesEntidade = () => {
 	      </ScrollView>
 	      <Image style={styles.imageEntidade}
 				resizeMode='stretch'
-		      source={require('../Assets/Images/santo.png')}
+		      source={item.uri}
 	      />
+	      <Modal
+			   animationType="slide"
+			   transparent={true}
+			   visible={modalVisible}
+			   onRequestClose={() => { setModalVisible(!modalVisible) }}
+			>
+			  	<View style={styles.centeredView}>
+          		<View style={styles.modalView}>
+		         	<DonateRoutes entidade={item}/>
+		         </View>
+		      </View>	
+	      </Modal>
 		</ScrollView>
 	)
 }
@@ -91,14 +99,14 @@ const styles = StyleSheet.create({
 		width: 113,
 		height: 102,
 		position: 'absolute',
-		marginTop: 80,
+		marginTop: 65,
 		alignSelf: "center"
 	},
 	containerDetalhes: {
 		borderTopLeftRadius: 30,
 		borderTopRightRadius: 30,
-		//marginTop: 130,
-		paddingTop: 70,
+		marginTop: -30,
+		paddingTop: 50,
 		width: windowWidth,
 		//height: windowHeight,
 		backgroundColor: 'white',
@@ -159,7 +167,25 @@ const styles = StyleSheet.create({
  		fontFamily: "Open Sans ExtraBold",
     	fontSize: 20,
     	color: "#FFF"
- 	}
+ 	},
+ 		centeredView: {
+    	flex: 1,
+    	justifyContent: "flex-end"
+  	},
+  	modalView: {
+  		//height: windowHeight-64,
+    	backgroundColor: "white",
+    	borderTopLeftRadius: 20,
+    	borderTopRightRadius: 20,
+    	shadowColor: "#000",
+    	shadowOffset: {
+      	width: 0,
+      	height: 2
+    	},
+    	shadowOpacity: 0.25,
+    	shadowRadius: 4,
+    	elevation: 5
+  	},
 })
 
 export default DetalhesEntidade;
