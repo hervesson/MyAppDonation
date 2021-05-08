@@ -20,7 +20,7 @@ const CenaTwo = (props) => {
 	      				R$
 	      			</Text>
 	      			<Text style={styles.preco}>
-	      				180
+	      				{props.valor}
 	      			</Text>
 	      			<Text style={styles.centavos}>
 	      				,00
