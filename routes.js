@@ -12,6 +12,9 @@ import Subscribe from "./src/Scenes/Subscribe"
 
 import AwesomePage from "./src/Scenes/AwesomePage";
 import DetalhesEntidade from "./src/Scenes/DetalhesEntidade";
+import ListEntidade from "./src/Scenes/ListEntidade"
+import ListAgenda from "./src/Scenes/ListAgenda"
+import DetalhesAgenda from "./src/Scenes/DetalhesAgenda"
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -19,7 +22,7 @@ const Drawer = createDrawerNavigator();
 export const SignedOutRoutes = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Subscribe" component={Subscribe} />
       </Stack.Navigator>
@@ -33,6 +36,9 @@ export const SignedInRoutes = () => {
       <Drawer.Navigator initialRouteName="AwesomePage" drawerContent={props => <CustomDrawerContent {...props} />}>
         <Drawer.Screen name="AwesomePage" component={AwesomePage} />
         <Drawer.Screen name="DetalhesEntidade" component={DetalhesEntidade} />
+        <Drawer.Screen name="ListEntidade" component={ListEntidade} />
+        <Drawer.Screen name="ListAgenda" component={ListAgenda} />
+        <Drawer.Screen name="DetalhesAgenda" component={DetalhesAgenda} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
