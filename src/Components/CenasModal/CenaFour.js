@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
       height: 55,
       width: 343,
       borderRadius: 10,
-      backgroundColor: "#F7344B",
+      backgroundColor: "#960500",
       alignSelf: 'center',
 	},
 	txtAdcCartao:{
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
       height: 55,
       width: 343,
       borderRadius: 10,
-      backgroundColor: "#2B0909",
+      backgroundColor: "#fbb600",
       alignSelf: 'center'
    },  
 	texto:{

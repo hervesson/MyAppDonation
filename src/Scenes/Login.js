@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
    },
    containerSupe: {
       flex: 1,
-      backgroundColor: '#F7344B',
+      backgroundColor: '#960500',
       justifyContent: "center",
       alignItems: "center",
    },
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
       height: 55,
       width: 343,
       borderRadius: 10,
-      backgroundColor: "#F7344B",
+      backgroundColor: "#960500",
       alignSelf: 'center',
       marginVertical: 10
    },

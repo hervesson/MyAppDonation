@@ -68,9 +68,9 @@ const ModalDoacao = (props) => {
 			         style={{windowWidth}}
 			         minimumValue={1}
 			         maximumValue={10}
-			         minimumTrackTintColor={"#74C971"}
+			         minimumTrackTintColor={"#fbb600"}
 			         maximumTrackTintColor={"black"}
-			         thumbTintColor={"#74C971"}
+			         thumbTintColor={"#fbb600"}
 			         onValueChange={(v) => setWeight(v)}
 			        	onSlidingComplete={(_) => valorCalculate()}
 			         value={weight}
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#F8F8F8'
 	},
 	containerEntidade: {
-		marginTop: 25,
+		marginTop: 5,
 		marginHorizontal: 10,
 		//alignItems: 'center', 
 		borderRadius: 10,
@@ -177,12 +177,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	txtCifrao: {
-		color: "#74C971",
+		color: "#fbb600",
 		fontFamily: 'Open Sans Bold',
 		fontSize: 17
 	},
 	txtValor:{
-		color: "#74C971",
+		color: "#fbb600",
 		fontFamily: 'Open Sans ExtaBold',
 		fontSize: 47
 	},
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
       height: 77,
       width: 343,
       borderRadius: 20,
-      backgroundColor: "#74C971",
+      backgroundColor: "#fbb600",
       alignSelf: 'center'
    },       
 })	

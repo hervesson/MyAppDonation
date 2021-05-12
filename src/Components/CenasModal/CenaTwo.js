@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
       height: 55,
       width: 343,
       borderRadius: 10,
-      backgroundColor: "#F7344B",
+      backgroundColor: "#960500",
       alignSelf: 'center',
       marginVertical: 25
 	},
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
       height: 77,
       width: 343,
       borderRadius: 20,
-      backgroundColor: "#74C971",
+      backgroundColor: "#fbb500",
       alignSelf: 'center'
    },  
 	texto:{

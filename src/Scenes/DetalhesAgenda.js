@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		borderRadius: 10,
-		backgroundColor: '#2B0909'
+		backgroundColor: '#fbb600'
 	},
 	containerVideo: {
 		paddingTop: 5,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
       height: 55,
       width: 343,
       borderRadius: 10,
-      backgroundColor: "#2B0909",
+      backgroundColor: "#fbb600",
       alignSelf: 'center'
    },  
 	texto:{
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
       height: 77,
       width: 343,
       borderRadius: 10,
-      backgroundColor: "#F7344B",
+      backgroundColor: "#960500",
       alignSelf: 'center',
       marginBottom: 10
  	},
