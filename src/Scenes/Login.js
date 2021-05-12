@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, Image, Dimensions, TouchableOpacity } from 'react-native'
 import auth from '@react-native-firebase/auth';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 
 const windowWidth = Dimensions.get('window').width;
@@ -11,6 +12,12 @@ const windowHeight = Dimensions.get('window').height;
 const Login = ({navigation}) => {
 	const [Email, setEmail] = React.useState("");
    const [Senha, setSenha] = React.useState("");
+
+   useEffect(() => {
+      GoogleSignin.configure({
+         webClientId: '197195621436-rg04skhfl030bupak2fa4q9eljptll49.apps.googleusercontent.com',
+      });
+   }, [])
 
 
    function Logar(argument) {
@@ -56,6 +63,22 @@ const Login = ({navigation}) => {
          console.warn(error)
       }
    }
+
+   const onGoogleButtonPress = async() => {
+      try {
+         const { idToken } = await GoogleSignin.signIn();
+
+         // Create a Google credential with the token
+         const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+         // Sign-in the user with the credential
+         return auth().signInWithCredential(googleCredential);
+         
+      }catch (error){
+         console.warn(error)
+      }
+   }
+
 	return (
 		<SafeAreaView style={{flex: 1}}>
          <View style={styles.containerSupe}>
@@ -64,7 +87,9 @@ const Login = ({navigation}) => {
             />
          </View>
          <View style={styles.containerInfe}>
-            <Text style={{alignSelf: "center", fontFamily: "Open Sans Bold", fontSize: 20, paddingTop: 10 }}>Login</Text>
+            <Text style={{alignSelf: "center", fontFamily: "Open Sans Bold", fontSize: 12, paddingTop: 10, color:"#666" }}>
+               Entrar com Email e senha:
+            </Text>
             <View>
                {/*<Text style={styles.label}>
                   Email:
@@ -108,7 +133,7 @@ const Login = ({navigation}) => {
                </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.containerGoogle}>
+            <TouchableOpacity style={styles.containerGoogle} onPress={() => onGoogleButtonPress().then(() => console.log('Signed in with Google!'))}>
                <Icon name="logo-google" size={30} color="white" />
                <Text style={styles.txtAdcCartao}>
                   Login com  Google
