@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     	fontSize: 20,
     	color: "#FFF"
  	},
- 		centeredView: {
+ 	centeredView: {
     	flex: 1,
     	justifyContent: "flex-end",
     	backgroundColor: 'rgba(0,0,0,0.8)',

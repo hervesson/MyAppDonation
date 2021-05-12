@@ -198,7 +198,8 @@ const styles = StyleSheet.create({
    },
    centeredView: {
     	flex: 1,
-    	justifyContent: "flex-end"
+    	justifyContent: "flex-end",
+    	backgroundColor: 'rgba(0,0,0,0.8)'
   	},
   	modalView: {
   		//height: windowHeight-64,
