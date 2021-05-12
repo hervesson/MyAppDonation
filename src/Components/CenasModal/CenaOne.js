@@ -5,7 +5,7 @@ import Slider from '@react-native-community/slider';
 
 const windowWidth = Dimensions.get('window').width;
 
-const ModalDoacao = (props) => {
+const ModalDoacao = ( props ) => {
 	const [selectedLanguage, setSelectedLanguage] = useState("Selecione a entidade");
 	const [weight, setWeight] = useState(1);
 	const [valorFinal, setValorFInal] = useState(45)
@@ -15,13 +15,14 @@ const ModalDoacao = (props) => {
     	setValorFInal(valor)
   	};
 
+
   	return (
     	<View>
 			<ScrollView>
 				<View style={styles.titulo}>
       			<Text style={styles.txtTitulo}>Fazer Doação</Text>
       		</View>
-      		<View style={styles.containerPiker}>
+      		{/*<View style={styles.containerPiker}>
       			<Picker
 						selectedValue={selectedLanguage}
 						style={{ height: 50}}
@@ -33,17 +34,19 @@ const ModalDoacao = (props) => {
 						<Picker.Item label="Lar de Maria" value="Lar de Maria" />
 						<Picker.Item label="Paz e bem!" value="Paz e bem!" />
 					</Picker>
-      		</View>
+				
+      		</View>*/}
+      		<Text></Text>
       		<View style={styles.containerEntidade}>
       			<Image style={styles.banner}
 	            	source={require('../../Assets/Images/fotoDeCapa.png')}
 	         	/>
 	         	<View style={styles.containerImgEntidade}>
 	         		<Image style={styles.imgEntidade}
-	            		source={require('../../Assets/Images/santo.png')}
+	            		source={props.entidade.uri}
 	         		/>
 	         		<View>
-	         			<Text style={styles.tituloEntidade}>Lar Beneficente Santo Antônio</Text>
+	         			<Text style={styles.tituloEntidade}>{props.entidade.title}</Text>
 	         			<Text style={styles.descricaoEntidade}>Lorem ipsum dolor</Text>
 	         		</View>
 	         	</View>
@@ -88,7 +91,7 @@ const ModalDoacao = (props) => {
 						,00
 					</Text>
 				</View>
-				<TouchableOpacity style={styles.container} onPress={() => { props.callback("cenaDois")}}>
+				<TouchableOpacity style={styles.container} onPress={() => { props.callback("cenaDois", valorFinal)}}>
                <Text style={styles.texto}>
                   Confirmar Doação
                </Text>
