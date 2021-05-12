@@ -89,6 +89,27 @@ const DetalhesEntidade = ({  route, navigation  }) => {
 	      <Modal
 			   animationType="slide"
 			   transparent={true}
+			   visible={modalMapa}
+			   onRequestClose={() => { setModalMapa(!modalMapa) }}
+			>
+				<View style={styles.centeredView}>
+					<View style={styles.containerMap}>
+						<Text style={styles.txtMapa}>Local do Evento</Text>
+				      <MapView
+						   style={{ flex: 1, borderRadius:5, borderWidth:2, borderColor:"#CCC"}}
+						   initialRegion={{
+						      latitude: 37.78825,
+						      longitude: -122.4324,
+						      latitudeDelta: 0.05,
+						      longitudeDelta: 0.05
+						   }}
+						/>
+				   </View>
+				</View>
+			</Modal>
+	      <Modal
+			   animationType="slide"
+			   transparent={true}
 			   visible={modalVisible}
 			   onRequestClose={() => { setModalVisible(!modalVisible) }}
 			>
@@ -192,7 +213,8 @@ const styles = StyleSheet.create({
  	},
  		centeredView: {
     	flex: 1,
-    	justifyContent: "flex-end"
+    	justifyContent: "flex-end",
+    	backgroundColor: 'rgba(0,0,0,0.8)',
   	},
   	modalView: {
   		//height: windowHeight-64,
@@ -208,6 +230,18 @@ const styles = StyleSheet.create({
     	shadowRadius: 4,
     	elevation: 5
   	},
+  	containerMap: {
+  		backgroundColor: 'white',
+    	height: 500,
+    	width:windowWidth,
+  	},
+  	txtMapa: {
+  		fontFamily: 'Open Sans ExtraBold',
+  		color: 'black',
+  		fontSize: 18,
+  		alignSelf: 'center',  
+  		paddingVertical: 20
+  	}
 })
 
 export default DetalhesEntidade;
