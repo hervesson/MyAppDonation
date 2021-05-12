@@ -1,62 +1,86 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, Modal, Pressable, Alert, Dimensions, TextInput, TouchableOpacity  } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ButtonDoacao from "../Components/ButtonDoacao"
 import DonateRoutes from "../Components/ModalDoacao"
+import auth from '@react-native-firebase/auth';
+
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const AwesomePage = ({ navigation }) => {
+	const [user, setUser] = useState([]);
+
+	useEffect(() => {
+		var user = auth().currentUser;
+		var name, email, photoUrl, uid, emailVerified;
+
+		if (user != null) {
+		  name = user.displayName;
+		  email = user.email;
+		  photoUrl = user.photoURL;
+		  emailVerified = user.emailVerified;
+		  uid = user.uid; 
+		}
+		setUser(user)
+	}, [])
 
   	const ENTIDADES = [
 	  	{
-	    	id: require('../Assets/Images/lar.png'),
+	    	uri: require('../Assets/Images/lar.png'),
+	    	title: 'Instituição Lar de Maria',
 	  	},
 	  	{
-	    	id: require('../Assets/Images/santo.png'),	
+	    	uri: require('../Assets/Images/santo.png'),
+	    	title: 'Lar Santo Antonio',
 	  	},
 	  	{
-	    	id: require('../Assets/Images/paz.png'),
+	    	uri: require('../Assets/Images/paz.png'),
+	    	title: 'Instituição Paz e Bem',
 	  	},
 	  	{
-	    	id: require('../Assets/Images/nosso.png'),
+	    	uri: require('../Assets/Images/nosso.png'),
+	    	title: 'Nosso lar',
 	  	}
 	];
 
 	const AGENDA = [
 	  	{
-	    	id: require('../Assets/Images/agenda1.png'),
+	    	uri: require('../Assets/Images/agenda1.png'),
+	    	title: "Deu a louca na Chef"
 	  	},
 	  	{
-	    	id: require('../Assets/Images/agenda2.png'),	
+	    	uri: require('../Assets/Images/agenda2.png'),
+	    	title: "Juntos pela Vila Gilda"	
 	  	},
 	  	{
-	    	id: require('../Assets/Images/agenda3.png'),
+	    	uri: require('../Assets/Images/agenda3.png'),
+	    	title: "Juntos pelo Ronald"	
 	  	}
 	];
 
 
-  	callbackFuncao = () => { navigation.navigate('ListEntidade', {doacao: true}) };
+   const	callbackFuncao = () => { navigation.navigate('ListEntidade', {doacao: true}) };
 
-	renderEntidade = ({item, index}) => {
+	const renderEntidade = ({item, index}) => {
 		return (
-			<TouchableOpacity onPress={() =>  navigation.navigate('DetalhesEntidade')}>
+			<TouchableOpacity onPress={() =>  navigation.navigate('DetalhesEntidade', {item: item})}>
 			<Image style={styles.avatarEntidades}
 				resizeMode='stretch'
-	         source={item.id}
+	         source={item.uri}
 	         resizeMode='contain'
 	      />	
 	      </TouchableOpacity>
 		)
 	}
 
-	renderAgenda = ({item, index}) => {
+	const renderAgenda = ({item, index}) => {
 		return (
-			<TouchableOpacity onPress={() => alert(index)}>
+			<TouchableOpacity onPress={() => navigation.navigate('DetalhesAgenda', {item: item})}>
 				<Image style={styles.avatarAgenda}
-		         source={item.id}
+		         source={item.uri}
 		      />	
 		   </TouchableOpacity>   
 		)
@@ -72,14 +96,14 @@ const AwesomePage = ({ navigation }) => {
 					</Text>
 				</TouchableOpacity>
 	    		<Image style={styles.avatar}
-               source={require('../Assets/Images/avatar.jpg')}
+               source={{uri: user.photoURL }}
             />
 	    	</View>
-	    	<View style={styles.containerBanner}>
+	    	<TouchableOpacity style={styles.containerBanner} onPress={() => navigation.navigate("Sobre")}>
 		    	<Image style={styles.banner}
 	            source={require('../Assets/Images/banner.png')}
 	         />	
-         </View>
+         </TouchableOpacity>
          <TouchableOpacity style={styles.titulo} onPress={() => navigation.navigate("ListEntidade", {doacao: false})}>
          	<Text style={styles.textTitulo}>Entidades</Text>
          	<Icon name="arrow-forward-outline" size={23} color="black" />
