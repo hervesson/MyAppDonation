@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import {  DrawerActions } from '@react-navigation/native';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
@@ -6,6 +6,21 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
 
 function CustomDrawerContent(props) {
+   const [user, setUser] = useState([]);
+
+   useEffect(() => {
+      var user = auth().currentUser;
+      var name, email, photoUrl, uid, emailVerified;
+
+      if (user != null) {
+        name = user.displayName;
+        email = user.email;
+        photoUrl = user.photoURL;
+        emailVerified = user.emailVerified;
+        uid = user.uid; 
+      }
+      setUser(user)
+   }, [])
 
    function SignOut(argument) {
       auth().signOut().then(() => console.log('User signed out!'));
@@ -17,11 +32,11 @@ function CustomDrawerContent(props) {
          <View style={styles.containerInfomation}>
             <View style={styles.containerUser}>
                <Image style={styles.avatar}
-                  source={require('../Assets/Images/avatar.jpg')}
+                  source={{uri: user.photoURL}}
                />
                <View style={styles.infomacoesAvatar}>
-                  <Text style={styles.textAvatar}>Fulano de tal</Text>
-                  <Text style={styles.textAvatar}>São luis - MA</Text>
+                  <Text style={styles.textAvatar}>{user.displayName}</Text>
+                  {/*<Text style={styles.textAvatar}>São luis - MA</Text>*/}
                </View>
             </View>
             <View style={styles.closeSideBar}>

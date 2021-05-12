@@ -1,14 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, Image, TextInpu, FlatList, TextInput, TouchableOpacity, Modal } from 'react-native'
 import Autocomplete from 'react-native-autocomplete-input';
 import DonateRoutes from "../Components/ModalDoacao"
-
+import auth from '@react-native-firebase/auth';
 
 const ListEntidade = ({  route, navigation  }) => {
 	const [query, setQuery] = useState("")
 	const [Profissoes, setProfissoes] = useState([]);
 	const [modalVisible, setModalVisible] = useState(false);
-	const [entidade, setEntidade] = useState("")
+	const [entidade, setEntidade] = useState("");
+	const [user, setUser] = useState([]);
+
+	useEffect(() => {
+		var user = auth().currentUser;
+		var name, email, photoUrl, uid, emailVerified;
+
+		if (user != null) {
+		  name = user.displayName;
+		  email = user.email;
+		  photoUrl = user.photoURL;
+		  emailVerified = user.emailVerified;
+		  uid = user.uid; 
+		}
+		setUser(user)
+	}, [])
 
 	function renderSearchBar(props){
 		return(
@@ -89,7 +104,7 @@ const ListEntidade = ({  route, navigation  }) => {
 					style={{fontFamily: 'Open Sans Light', flex: 1, backgroundColor: '#F8F8F8', marginLeft: 10, borderRadius: 10, paddingLeft: 10, }}>
 				</TextInput>
 	    		<Image style={styles.avatar}
-               source={require('../Assets/Images/avatar.jpg')}
+               source={{uri: user.photoURL }}
             />
 	    		
 	    	</View>
