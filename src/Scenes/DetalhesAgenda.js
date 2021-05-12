@@ -1,13 +1,15 @@
 import React, { useState, useCallback } from 'react'
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView, PixelRatio, Button, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, PixelRatio, Button, TouchableOpacity, Modal, Share } from 'react-native';
 import YoutubePlayer from "react-native-youtube-iframe";
-import DonateRoutes from "../Components/ModalDoacao"
+import DonateRoutes from "../Components/ModalDoacao";
+import MapView from "react-native-maps";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const DetalhesEntidade = ({  route, navigation  }) => {
 	const [modalVisible, setModalVisible] = useState(false);
+	const [modalMapa, setModalMapa] = useState(false)
 
 	const [playing, setPlaying] = useState(false);
 
@@ -18,10 +20,19 @@ const DetalhesEntidade = ({  route, navigation  }) => {
     	}
   	}, []);
 	
-	const togglePlaying = useCallback(() => {
-    	setPlaying((prev) => !prev);
-  	}, []);	
-
+	const onShare = async () => {
+    try {
+      const result = await Share.share({
+        	title: "Novo evento",//string
+        	message: "Esse é um evento de teste, vamos ajudar",//string
+         url: "https://img.freepik.com/fotos-gratis/flor-rosa-que-floresce-no-campo-que-floresce-no-jardim_78773-264.jpg?size=626&ext=jpg",
+      });
+      
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+	
   	const { item } = route.params;
 
 	return (
@@ -60,18 +71,18 @@ const DetalhesEntidade = ({  route, navigation  }) => {
 					</Text>
 				</View>
 				<View style={{flexDirection: 'row'}}>
-					<TouchableOpacity style={styles.botaoAcessivel}>
+					<TouchableOpacity style={styles.botaoAcessivel} onPress={() =>  navigation.navigate('DetalhesEntidade', {item: item})}>
 		            <Text style={styles.texto}>
 		               Conhecer entidade 
 		            </Text>
          		</TouchableOpacity>
-	         	<TouchableOpacity style={styles.botaoAcessivel}>
+	         	<TouchableOpacity style={styles.botaoAcessivel} onPress={() => setModalMapa(true)}>
 		            <Text style={styles.texto}>
 		               Local do evento
 		            </Text>
 	         	</TouchableOpacity>
 				</View>
-				<TouchableOpacity style={styles.containerButton}>
+				<TouchableOpacity style={styles.containerButton} onPress={() => onShare()}>
 	            <Text style={styles.texto}>
 	               Compartilhar 
 	            </Text>
