@@ -4,7 +4,7 @@ import auth from '@react-native-firebase/auth';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-
+import axios from "axios";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -33,7 +33,7 @@ const Login = ({navigation}) => {
          if (error.code === 'auth/invalid-email') {
             console.warn('That email address is invalid!');
          }
-         console.error(error);
+         console.warn(error);
       });
    }
 
@@ -76,6 +76,24 @@ const Login = ({navigation}) => {
          
       }catch (error){
          console.warn(error)
+      }
+   }
+
+   const criarCustomer = (props) => {
+      if(props.additionalUserInfo.isNewUser){
+         axios.post('https://us-central1-myappdonate.cloudfunctions.net/createCustomer', {
+            email: props.user._user.email,
+            nome: props.user._user.displayName,
+            uid: props.user._user.uid
+         })
+         .then((response) => {
+            console.log(response)
+         })
+         .catch(function (error) {
+            console.log(error);
+         }); 
+      }else{
+         console.log("user antigo")
       }
    }
 
@@ -126,21 +144,27 @@ const Login = ({navigation}) => {
                </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.containerFace} onPress={() => {onFacebookButtonPress()}}>
+            <Text style={{alignSelf: "center", fontFamily: "Open Sans Bold", fontSize: 12, paddingTop: 10, color:"#666" }}>
+               Ou entre com:
+            </Text>
+
+            <TouchableOpacity style={styles.containerFace} onPress={() => {onFacebookButtonPress().then(e => {criarCustomer(e)}) }}>
                <Icon name="logo-facebook" size={30} color="white" />
                <Text style={styles.txtAdcCartao}>
                   Login com Facebook
                </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.containerGoogle} onPress={() => onGoogleButtonPress().then(() => console.log('Signed in with Google!'))}>
+            <TouchableOpacity style={styles.containerGoogle} onPress={() => {onGoogleButtonPress().then(e => {criarCustomer(e)}) }}>
                <Icon name="logo-google" size={30} color="white" />
                <Text style={styles.txtAdcCartao}>
                   Login com  Google
                </Text>
             </TouchableOpacity>
 
-            <Text style={styles.forgot}>Ainda não tem cadastro? Faça Aqui!</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Subscribe')}>
+               <Text style={styles.forgot}>Ainda não tem cadastro? Faça Aqui!</Text>
+            </TouchableOpacity>   
 
          {/*<Button title="Logar" color="green" onPress={() => {Logar()}}/>
             <Text>
@@ -168,7 +192,7 @@ const styles = StyleSheet.create({
       fontFamily: 'Open Sans Regular',
       fontSize: 13,
       alignSelf: 'center',
-      paddingTop: 15 ,
+      paddingTop: 7 ,
       textDecorationLine: 'underline'
    },
    label: {
