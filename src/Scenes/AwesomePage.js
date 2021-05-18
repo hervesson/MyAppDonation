@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, Modal, Pressable, Alert, Dimensions, TextInput, TouchableOpacity  } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, StatusBar, FlatList, Pressable, Alert, Dimensions, TextInput, TouchableOpacity  } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ButtonDoacao from "../Components/ButtonDoacao"
 import DonateRoutes from "../Components/ModalDoacao"
 import auth from '@react-native-firebase/auth';
-
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -24,8 +23,8 @@ const AwesomePage = ({ navigation }) => {
 		  emailVerified = user.emailVerified;
 		  uid = user.uid; 
 		}
-		setUser(user)
-	}, [])
+		setUser(user);
+	}, []);
 
   	const ENTIDADES = [
 	  	{
@@ -66,7 +65,7 @@ const AwesomePage = ({ navigation }) => {
 
 	const renderEntidade = ({item, index}) => {
 		return (
-			<TouchableOpacity onPress={() =>  navigation.navigate('DetalhesEntidade', {item: item})}>
+			<TouchableOpacity onPress={() =>  navigation.navigate('DetalhesEntidade', {item: item})} key={item.title}>
 			<Image style={styles.avatarEntidades}
 				resizeMode='stretch'
 	         source={item.uri}
@@ -78,7 +77,7 @@ const AwesomePage = ({ navigation }) => {
 
 	const renderAgenda = ({item, index}) => {
 		return (
-			<TouchableOpacity onPress={() => navigation.navigate('DetalhesAgenda', {item: item})}>
+			<TouchableOpacity onPress={() => navigation.navigate('DetalhesAgenda', {item: item})} key={item.title}>
 				<Image style={styles.avatarAgenda}
 		         source={item.uri}
 		      />	
@@ -112,7 +111,7 @@ const AwesomePage = ({ navigation }) => {
 		      <FlatList
 		        	data={ENTIDADES}
 		        	renderItem={renderEntidade}
-		        	keyExtractor={item => item.id}
+		        	keyExtractor={item => item.title}
 		        	horizontal={true} 
 		      />
     		</View>
@@ -124,7 +123,7 @@ const AwesomePage = ({ navigation }) => {
 		      <FlatList
 		        	data={AGENDA}
 		        	renderItem={renderAgenda}
-		        	keyExtractor={item => item.id}
+		        	keyExtractor={item => item.title}
 		        	horizontal={true} 
 		      />
     		</View>
