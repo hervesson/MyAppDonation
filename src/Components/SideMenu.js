@@ -5,7 +5,7 @@ import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navi
 import Icon from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
 
-function CustomDrawerContent(props) {
+function CustomDrawerContent({props, navigation}) {
    const [user, setUser] = useState([]);
 
    useEffect(() => {
@@ -44,12 +44,12 @@ function CustomDrawerContent(props) {
             </View>
          </View> 
          <View style={styles.divider}></View>  
-         <View style={styles.itemMenu}>
+         <TouchableOpacity style={styles.itemMenu} onPress={() =>  navigation.navigate('Carteira')}>
             <Icon name="wallet-outline" size={30} color="#F7344B" />
             <Text style={styles.textMenu}>
               Carteira
             </Text>
-         </View>
+         </TouchableOpacity>
          <View style={styles.itemMenu}>
             <Icon name="archive-outline" size={30} color="#F7344B" />
             <Text style={styles.textMenu}> 

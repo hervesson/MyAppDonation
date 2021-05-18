@@ -16,6 +16,7 @@ import ListEntidade from "./src/Scenes/ListEntidade"
 import ListAgenda from "./src/Scenes/ListAgenda"
 import DetalhesAgenda from "./src/Scenes/DetalhesAgenda"
 import Sobre from "./src/Scenes/Sobre"
+import Carteira from "./src/Scenes/Carteira"
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -41,6 +42,7 @@ export const SignedInRoutes = () => {
         <Drawer.Screen name="ListAgenda" component={ListAgenda} />
         <Drawer.Screen name="DetalhesAgenda" component={DetalhesAgenda} />
         <Drawer.Screen name="Sobre" component={Sobre} />
+        <Drawer.Screen name="Carteira" component={Carteira} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
