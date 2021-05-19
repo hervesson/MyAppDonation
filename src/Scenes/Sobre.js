@@ -6,7 +6,7 @@ const Sobre = () => {
 		<View style={{flex: 1}}>
 			<View style={styles.containerSupe}>
 				<Image style={styles.avatar}
-               source={require('../Assets/Images/logo.png')}
+               source={require('../Assets/Images/logoAB.png')}
                resizeMode= 'contain'
             />
             <View style={styles.detalhes}>
