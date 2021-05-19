@@ -4,14 +4,14 @@ import auth from '@react-native-firebase/auth';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { Formik } from 'formik'
+import * as yup from 'yup'
 import axios from "axios";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const Login = ({navigation}) => {
-	const [Email, setEmail] = React.useState("");
-   const [Senha, setSenha] = React.useState("");
 
    useEffect(() => {
       GoogleSignin.configure({
@@ -21,7 +21,7 @@ const Login = ({navigation}) => {
 
 
    function Logar(argument) {
-      auth().signInWithEmailAndPassword(Email, Senha)
+      auth().signInWithEmailAndPassword(argument.email, argument.password)
       .then(() => {
          console.warn('User account created & signed in!');
       })
@@ -97,11 +97,22 @@ const Login = ({navigation}) => {
       }
    }
 
+    const loginValidationSchema = yup.object().shape({
+      email: yup
+         .string()
+         .email("Por favor coloque um email válido!")
+         .required('O endereço de Email é requerido!'),
+      password: yup
+         .string()
+         .min(6, ({ min }) => `A senha deve conter no minimo ${min} caracteres`)
+         .required('A senha é requerida!'),
+   })
+
 	return (
 		<SafeAreaView style={{flex: 1}}>
          <View style={styles.containerSupe}>
             <Image style={styles.avatar}
-               source={require('../Assets/Images/logo.png')}
+               source={require('../Assets/Images/logoAB.png')}
             />
          </View>
          <View style={styles.containerInfe}>
@@ -109,40 +120,65 @@ const Login = ({navigation}) => {
                Entrar com Email e senha:
             </Text>
             <View>
-               {/*<Text style={styles.label}>
-                  Email:
-               </Text>*/}
-               <View style={styles.input}>
-                  <Icon name="mail-outline" size={20} color="black" />
-                  <TextInput
-                     style={{flex: 1}}
-                     onChangeText={setEmail}
-                     value={Email}
-                     placeholder="Email"
-                  />
-               </View>
-               {/*<Text style={styles.label}>
-                  Senha:
-               </Text>*/}
-               <View style={styles.input}>
-                  <Icon name="lock-closed-outline" size={20} color="black" />
-                  <TextInput
-                     style={{flex: 1}}
-                     onChangeText={setSenha}
-                     value={Senha}
-                     placeholder="Senha"
-                     //keyboardType="numeric"
-                  />
-               </View>
+               <Formik
+                  validationSchema={loginValidationSchema}
+                  initialValues={{ email: '', password: ''}}
+                  onSubmit={values => Logar(values)}
+               >
+                  {({
+                    handleChange,
+                    handleBlur,
+                    handleSubmit,
+                    values,
+                    errors,
+                    isValid,
+                  }) => (
+                    <>
+                     <View style={styles.input}>
+                        <Icon name="mail-outline" size={20} color="black" />
+                        <TextInput
+                           autoCapitalize="none"
+                           name="email"
+                           placeholder="Endereço de Email"
+                           style={{flex: 1}}
+                           onChangeText={handleChange('email')}
+                           onBlur={handleBlur('email')}
+                           value={values.email}
+                           keyboardType="email-address"
+                        />
+                     </View>   
+                     {errors.email &&
+                        <Text style={{ fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', paddingLeft:10 }}>{errors.email}</Text>
+                     }
+                     <View style={styles.input}>
+                        <Icon name="lock-closed-outline" size={20} color="black" />
+                        <TextInput
+                           autoCapitalize="none"
+                           name="password"
+                           placeholder="Senha"
+                           style={{flex: 1}}
+                           onChangeText={handleChange('password')}
+                           onBlur={handleBlur('password')}
+                           value={values.password}
+                           secureTextEntry
+                        />
+                     </View>    
+                     {errors.password &&
+                        <Text style={{ fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', paddingLeft:10 }}>{errors.password}</Text>
+                     }
+                  
+                     <Text style={styles.forgot}>Esqueceu sua senha?</Text>
+
+                     <TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
+                        <Text style={styles.txtAdcCartao}>
+                           Entrar
+                        </Text>
+                     </TouchableOpacity>
+
+                    </>
+                  )}
+               </Formik>
             </View>
-
-            <Text style={styles.forgot}>Esqueceu sua senha?</Text>
-
-            <TouchableOpacity style={styles.containerAdcCartao} onPress={() => {Logar()}}>
-               <Text style={styles.txtAdcCartao}>
-                  Entrar
-               </Text>
-            </TouchableOpacity>
 
             <Text style={{alignSelf: "center", fontFamily: "Open Sans Bold", fontSize: 12, paddingTop: 10, color:"#666" }}>
                Ou entre com:
