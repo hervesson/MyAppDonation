@@ -1,8 +1,121 @@
-import React from 'react'
-import { View, Text, StyleSheet, ScrollView,TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react'
+import { View, Text, StyleSheet, ScrollView,TouchableOpacity, ActivityIndicator, Picker } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import stripe, { StripeCardInputWidget } from '@agaweb/react-native-stripe';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import axios from "axios";
+
+stripe.initModule("pk_test_51IbW7iDov2PsfCIgO5MKG7DRDxUB0aq5GoJbrYTqLovKAJWKvRZqgNzTukkCgO8X6IMBMkSIrws9HaaU3EZLR24R0011lppkyb");
 
 const CenaTwo = (props) => {
+	const [isValid, setIsValid] = useState(false);
+  	const [cardParams, setCardParams] = useState(undefined);
+  	const [cards, setCards] = useState([]);
+  	const [isFetching, setIsFetching] = useState(false);
+  	const [displayCard, setDisplayCard] = useState(false)
+  	const [selectedValue, setSelectedValue] = useState();
+  	const [customerId, setCustomerId] = useState("")
+
+  	useEffect(() => {
+  		var user = auth().currentUser;
+		firestore()
+      	.collection('Doadores')
+      	.doc(user.uid)
+      	.onSnapshot(documentSnapshot => {
+      		setCustomerId(documentSnapshot.data().customerId);
+      		retriveCard(documentSnapshot.data().customerId)
+      	});
+	}, [])
+
+	const retriveCard = (customer) => {
+		setIsFetching(true);
+
+		axios.post('https://us-central1-myappdonate.cloudfunctions.net/retriveCards', {
+    		customerId: customer
+  		})
+	  	.then((response) => {
+	  		if(response.data.data.length > 0){
+	  			setCards(response.data.data);
+	    		setSelectedValue(response.data.data[0].id);
+	  		}
+	    	setIsFetching(false);
+	  	})
+  		.catch(function (error) {
+    		console.warn(error);
+  		}); 
+	}
+
+	const pay = () => {
+	   fetch(
+	      'https://api.stripe.com/v1/payment_intents?amount='+props.valor+'00&currency=brl&customer='+customerId+'&description='+props.entidade.title,
+	      {
+	         method: 'POST',
+	         headers: {
+	            Authorization: 'Bearer sk_test_51IbW7iDov2PsfCIgoLxBTIlobisxvleNNaRZcCTHC0XElwhSHK41ZenMlkw21DG5IrqTQTCVnuvRUb9LU8EBQ8wk00ojxaojZB'
+	         },
+	      },
+	   )
+      .then((response) => response.json())
+      .then((response) => {
+      	console.warn(response)
+        	if (response.error) {
+          	alert(response.error.message);
+        	} else if (response.client_secret) {
+         stripe
+            .confirmPaymentWithPaymentMethodId( response.client_secret, selectedValue )
+            .then(() => {
+            	//console.warn(doc)
+               props.callback("cenaThree")
+            })
+            .catch((err) => {
+              alert(err);
+            });
+        	}
+      }); 
+  	};
+
+  	const setupIntent = () => {
+      fetch(
+         'https://api.stripe.com/v1/setup_intents?customer='+customerId, {
+            method: 'POST',
+            headers: {
+             	Authorization: 'Bearer sk_test_51IbW7iDov2PsfCIgoLxBTIlobisxvleNNaRZcCTHC0XElwhSHK41ZenMlkw21DG5IrqTQTCVnuvRUb9LU8EBQ8wk00ojxaojZB'
+            },
+         }
+      )
+      .then((response) => response.json())
+      .then((response) => {
+         if (response.error) {
+            alert(response.error.message);
+         } else if (response.client_secret) {
+            stripe.confirmCardSetup(response.client_secret, {
+               number: cardParams.number,
+               expMonth: cardParams.expMonth,
+               expYear: cardParams.expYear,
+               cvc: cardParams.cvc,
+            })
+            .then((data) => {
+               console.log(data);
+              	retriveCard(customerId);
+              	setDisplayCard(false)
+               //alert('Successful setup');
+            })
+            .catch((err) => {
+               alert(err);
+            });
+         }
+      });
+   };
+
+   function Renderitems(){
+   	return (
+   		cards.map((item, index) => 
+				<Picker.Item label={item.card.brand+ "  " +item.card.last4} value={item.id} key={item.card.id} />  
+   		)
+   	)	
+   }
+
 	return (
 		<View>
 			<ScrollView>
@@ -12,7 +125,7 @@ const CenaTwo = (props) => {
       		<View  style={styles.containerDetalhe}>
       			<View style={styles.containerDescricao}>
       				<Text style={styles.txtDescricao}>
-	      				Doação para o lar beneficente santo antônio
+	      				Doação para o {props.entidade.title}
 	      			</Text>
       			</View>
       			<View style={styles.containerPreco}>
@@ -27,25 +140,66 @@ const CenaTwo = (props) => {
 	      			</Text>
       			</View>
       		</View>
-      		<View style={styles.containerCartao}>
-      			<Icon name="card-outline" size={30} color="black" />
-      			<View style={styles.containerTxtCartao}>
-	      			<Text style={styles.txtCartao}>
-	                  Cartão de Crédito X
-	               </Text>
-	               <Text style={styles.txtDigitosCartao}>
-	                  XXXX.8975
-	               </Text>
-	            </View>   
-      		</View>
+      		{
+      			isFetching ? <ActivityIndicator size="small" color="#0000ff"/> : 
+      				cards.length <= 0 ? 
+      					<View style={{paddingHorizontal: 10}}>
+				      		<StripeCardInputWidget
+						         onCardValidCallback={({isValid, cardParams}) => {
+						            setIsValid(isValid);
+						            setCardParams(cardParams);
+						         }}   
+						      />
+						      <TouchableOpacity style={styles.containerAdcCartao} onPress={() => setupIntent()}>
+				               <Text style={styles.txtAdcCartao}>
+				                  Adiconar Cartao
+				               </Text>
+			            	</TouchableOpacity>
+		      			</View>
+      				:  displayCard ?
+      					<View style={{paddingHorizontal: 10}}>
+	      					<StripeCardInputWidget
+							      onCardValidCallback={({isValid, cardParams}) => {
+							         setIsValid(isValid);
+							         setCardParams(cardParams);
+							      }}   
+							   />
+							   <View style={{flexDirection: 'row', paddingVertical: 10}}>
+									<TouchableOpacity style={styles.botaoAcessivel} onPress={() => setDisplayCard(false)}>
+						            <Text style={styles.txtDetalhes}>
+						               Cancelar
+						            </Text>
+				         		</TouchableOpacity>
+					         	<TouchableOpacity style={styles.botaoAcessivel} onPress={() => {if(isValid == true){setupIntent()}}}>
+						            <Text style={styles.txtDetalhes}>
+						               Salvar cartão
+						            </Text>
+					         	</TouchableOpacity>
+								</View>
+							</View>    
+						   :
+						   <View>
+	      					<View style={styles.containerCartao}>
+				      			<Icon name="card-outline" size={30} color="black" />
+				      			
+					      			<Picker
+									      selectedValue={selectedValue}
+									      style={{ flex: 1}}
+									      onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+									   >
+									      {Renderitems()}
+									   </Picker>
+					               
+				      		</View>	
+				      		<TouchableOpacity style={styles.containerAdcCartao} onPress={() => { setDisplayCard(true) }}>
+					               <Text style={styles.txtAdcCartao}>
+					                  Adicionar Cartao
+					               </Text>
+				            </TouchableOpacity>
+			            </View>
+      		}
 
-      		<TouchableOpacity style={styles.containerAdcCartao}>
-               <Text style={styles.txtAdcCartao}>
-                  Adiconar Cartao
-               </Text>
-            </TouchableOpacity>
-
-				<TouchableOpacity style={styles.container} onPress={() => { props.callback("cenaThree")}}>
+				<TouchableOpacity style={styles.container} onPress={() => pay()}>
                <Text style={styles.texto}>
                   Efetuar Pagamento
                </Text>
@@ -102,7 +256,6 @@ const styles = StyleSheet.create({
 	containerCartao: {
 		flexDirection: 'row',
 		paddingHorizontal: 10,
-		flexDirection: "row",
 		height: 66,
 		borderColor: '#D2D2D2',
 		borderWidth: 0.5,
@@ -125,6 +278,21 @@ const styles = StyleSheet.create({
 		fontFamily: 'Open Sans Bold',
 		fontSize: 17
 	},
+	botaoAcessivel: {
+		flex: 1, 
+		height: 55, 
+		backgroundColor: 'red', 
+		marginHorizontal: 10,
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 10,
+		backgroundColor: '#960500'
+	},
+	txtDetalhes:{
+ 		fontFamily: "Open Sans ExtraBold",
+    	fontSize: 13,
+    	color: "#FFF"
+ 	},
 	containerAdcCartao: {
 		justifyContent: "center",
       alignItems: "center",
