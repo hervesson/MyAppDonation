@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
-import { View, Text, Image, StyleSheet, ScrollView, Dimensions, TouchableOpacity} from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, Dimensions, TouchableOpacity, TextInput} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import Slider from '@react-native-community/slider';
+import { TextInputMask } from 'react-native-masked-text'
+
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -9,12 +11,20 @@ const ModalDoacao = ( props ) => {
 	const [selectedLanguage, setSelectedLanguage] = useState("Selecione a entidade");
 	const [weight, setWeight] = useState(1);
 	const [valorFinal, setValorFInal] = useState(45)
+	const [slider, setSlider] = useState(true)
+	const [valor, setValor] = useState("")
 	
 	const valorCalculate = () => {
     	const valor = weight*45;
     	setValorFInal(valor)
   	};
 
+	const cifrao = (vem) => {
+      if(vem !== "R"){
+         var exe = vem.replace("R$", "")
+         setValorFInal(exe)
+      } 
+   }
 
   	return (
     	<View>
@@ -66,20 +76,43 @@ const ModalDoacao = ( props ) => {
 	            	source={require('../../Assets/Images/duasCestas.png')}
 	         	/>
       		</View>
-      		<View style={styles.containerSlide}>
-	      		<Slider
-			         style={{windowWidth}}
-			         minimumValue={1}
-			         maximumValue={10}
-			         minimumTrackTintColor={"#fbb600"}
-			         maximumTrackTintColor={"black"}
-			         thumbTintColor={"#fbb600"}
-			         onValueChange={(v) => setWeight(v)}
-			        	onSlidingComplete={(_) => valorCalculate()}
-			         value={weight}
-			         step={1}
-			      />
-				</View>
+      		{
+      			slider ? 
+      				<View>
+      				<View style={styles.containerSlide}>
+	      				<Slider
+					         style={{windowWidth}}
+					         minimumValue={1}
+					         maximumValue={20}
+					         minimumTrackTintColor={"#fbb600"}
+					         maximumTrackTintColor={"black"}
+					         thumbTintColor={"#fbb600"}
+					         onValueChange={(v) => setWeight(v)}
+					        	onSlidingComplete={(_) => valorCalculate()}
+					         value={weight}
+					         step={1}
+			      		/>
+						</View>
+						<TouchableOpacity style={{paddingTop: 10, paddingLeft: 10}} onPress={() => setSlider(false)}>
+							<Text>Deseja doar outro valor?</Text>
+						</TouchableOpacity>
+						</View>
+					: 
+						<View style={styles.containerInput}>
+							<TextInput
+							 	style={{flex: 1}}
+							 	placeholder="Digite o valor Aqui"
+							 	value={"R$" + valorFinal}
+            				onChangeText={(text) => cifrao(text) } 
+							 	keyboardType="numeric"
+							/>
+							<TouchableOpacity style={styles.botoesInput} onPress={() => {setSlider(true); valorCalculate()}}>
+								<Text>Cancelar</Text>
+							</TouchableOpacity>
+						</View>
+      		}
+      		
+
 				<View style={styles.containerDinheiro}>
 					<Text style={styles.txtCifrao}>
 						R$
@@ -203,6 +236,20 @@ const styles = StyleSheet.create({
       backgroundColor: "#fbb600",
       alignSelf: 'center'
    },       
+   botoesInput: {
+   	backgroundColor:"#960500", 
+   	margin: 5, 
+   	justifyContent: "center", 
+   	padding: 5, 
+   	borderRadius: 10
+   },
+   containerInput: {
+   	backgroundColor:"#fbb600", 
+   	marginTop: 20, 
+   	marginHorizontal: 10, 
+   	borderRadius: 10, 
+   	flexDirection: 'row'
+   }
 })	
 
 export default ModalDoacao
