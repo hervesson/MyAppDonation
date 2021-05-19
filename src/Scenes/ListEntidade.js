@@ -119,7 +119,7 @@ const ListEntidade = ({  route, navigation  }) => {
 	    	<FlatList
 	        	data={DATA}
 	        	renderItem={renderItem}
-	        	keyExtractor={item => item.id}
+	        	keyExtractor={item => item.title}
 	      />
 	      <Modal
 			      animationType="slide"
