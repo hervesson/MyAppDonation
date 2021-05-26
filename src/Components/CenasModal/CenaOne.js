@@ -7,12 +7,12 @@ import { TextInputMask } from 'react-native-masked-text'
 
 const windowWidth = Dimensions.get('window').width;
 
-const ModalDoacao = ( props ) => {
+const CenaOne = ( props ) => {
 	const [selectedLanguage, setSelectedLanguage] = useState("Selecione a entidade");
 	const [weight, setWeight] = useState(1);
 	const [valorFinal, setValorFInal] = useState(45)
 	const [slider, setSlider] = useState(true)
-	const [valor, setValor] = useState("")
+	//const [valor, setValor] = useState("")
 	
 	const valorCalculate = () => {
     	const valor = weight*45;
@@ -20,10 +20,11 @@ const ModalDoacao = ( props ) => {
   	};
 
 	const cifrao = (vem) => {
-      if(vem !== "R"){
-         var exe = vem.replace("R$", "")
-         setValorFInal(exe)
-      } 
+      if(vem == ""){
+      	setValorFInal(45) 
+  		}else{
+  			setValorFInal(vem)
+  		}
    }
 
   	return (
@@ -94,17 +95,18 @@ const ModalDoacao = ( props ) => {
 			      		/>
 						</View>
 						<TouchableOpacity style={{paddingTop: 10, paddingLeft: 10}} onPress={() => setSlider(false)}>
-							<Text>Deseja doar outro valor?</Text>
+							<Text style={{fontFamily: 'Open Sans Regular'}}>Deseja doar outro valor?</Text>
 						</TouchableOpacity>
 						</View>
 					: 
 						<View style={styles.containerInput}>
+							<Text style={{paddingLeft: 10}}>R$</Text>
 							<TextInput
 							 	style={{flex: 1}}
 							 	placeholder="Digite o valor Aqui"
-							 	value={"R$" + valorFinal}
+							 	value={valorFinal}
             				onChangeText={(text) => cifrao(text) } 
-							 	keyboardType="numeric"
+							 	keyboardType="decimal-pad"
 							/>
 							<TouchableOpacity style={styles.botoesInput} onPress={() => {setSlider(true); valorCalculate()}}>
 								<Text>Cancelar</Text>
@@ -120,9 +122,9 @@ const ModalDoacao = ( props ) => {
 					<Text style={styles.txtValor}>
 						{valorFinal}
 					</Text>
-					<Text style={styles.txtCifrao}>
+					{/*<Text style={styles.txtCifrao}>
 						,00
-					</Text>
+					</Text>*/}
 				</View>
 				<TouchableOpacity style={styles.container} onPress={() => { props.callback("cenaDois", valorFinal)}}>
                <Text style={styles.texto}>
@@ -244,6 +246,7 @@ const styles = StyleSheet.create({
    	borderRadius: 10
    },
    containerInput: {
+   	alignItems: "center",
    	backgroundColor:"#fbb600", 
    	marginTop: 20, 
    	marginHorizontal: 10, 
@@ -252,4 +255,4 @@ const styles = StyleSheet.create({
    }
 })	
 
-export default ModalDoacao
+export default CenaOne
