@@ -113,6 +113,7 @@ const Login = ({navigation}) => {
          <View style={styles.containerSupe}>
             <Image style={styles.avatar}
                source={require('../Assets/Images/logoAB.png')}
+               resizeMode="contain"
             />
          </View>
          <View style={styles.containerInfe}>
@@ -250,8 +251,8 @@ const styles = StyleSheet.create({
       marginTop: -20
    },
    avatar: {
-      height: 181,
-      width: 130
+      height: 151,
+      width: 100
    },
    containerAdcCartao: {
       justifyContent: "center",
