@@ -50,28 +50,22 @@ function CustomDrawerContent({props, navigation}) {
               Carteira
             </Text>
          </TouchableOpacity>
-         <View style={styles.itemMenu}>
+         <TouchableOpacity style={styles.itemMenu}  onPress={() => navigation.navigate('MinhasDoacoes')}>
             <Icon name="archive-outline" size={30} color="#F7344B" />
             <Text style={styles.textMenu}> 
               Minhas Doações
             </Text>
-         </View>
+         </TouchableOpacity>
          <View style={styles.itemMenu}>
             <Icon name="heart-outline" size={30} color="#F7344B" />
             <Text style={styles.textMenu}>
               Entidades Favoritas
             </Text>
          </View>
-         <View style={styles.itemMenu}>
+         <TouchableOpacity style={styles.itemMenu} onPress={() => navigation.navigate('Config')}>
             <Icon name="settings-outline" size={30} color="#F7344B" />
             <Text style={styles.textMenu}>
               Configurações de Conta
-            </Text>
-         </View> 
-         <TouchableOpacity style={styles.itemMenu} onPress={() => SignOut()}>
-            <Icon name="log-out-outline" size={30} color="#F7344B" />
-            <Text style={styles.textMenu}>
-              Sair
             </Text>
          </TouchableOpacity> 
       </View>   
