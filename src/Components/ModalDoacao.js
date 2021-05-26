@@ -8,21 +8,26 @@ import CenaFour from "./CenasModal/CenaFour"
 
 const ModalDoacao = ( props ) => {
 	let [activeComponent, setActiveComponent] = useState(<CenaOne callback={callbackFuncao} entidade={props.entidade} />);
-	const [componentName, setComponentName] = useState("")
+	const [componentName, setComponentName] = useState("");
    const [valor, setValor] = useState(0);
-   const [entidade, setEntidade] = useState("propaganeda")
+   const [recibo, setRecibo] = useState([])
+   const [entidade, setEntidade] = useState("propaganeda");
 
    //console.warn(props.entidade)
 
 	function callbackFuncao(values, valor){
 		setComponentName(values);
-      setValor(valor)
+      valor ? setValor(valor) : null 
 	};
+
+   function callbackRecibo(recibo){
+      recibo ? setRecibo(recibo) : null 
+   };
 
 	useEffect(() => {
     	switch (componentName) {
       	case "cenaDois":
-        		setActiveComponent(<CenaTwo callback={callbackFuncao} valor={valor} entidade={props.entidade} />);
+        		setActiveComponent(<CenaTwo callback={callbackFuncao} valor={valor} entidade={props.entidade} recibo={callbackRecibo} />);
         	break;
 
          case "cenaThree":
@@ -30,7 +35,7 @@ const ModalDoacao = ( props ) => {
          break;
 
          case "cenaFour":
-            setActiveComponent(<CenaFour />);
+            setActiveComponent(<CenaFour entidade={props.entidade} valor={valor} recibo={recibo} />);
          break;
 
       	default:
