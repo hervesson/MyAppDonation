@@ -203,8 +203,8 @@ const App = () => {
                         </View>
                      ) : (
                         <View style={{flexDirection: 'row', paddingVertical: 10}}>
-                           <TouchableOpacity style={styles.botaoAcessivel} onPress={() => setModalVisible(false)}>
-                              <Text style={styles.txtDetalhes}>
+                           <TouchableOpacity style={styles.botaoAcessivel1} onPress={() => setModalVisible(false)}>
+                              <Text style={styles.txtDetalhes1}>
                                  Cancelar
                               </Text>
                            </TouchableOpacity>
@@ -308,6 +308,16 @@ const styles = StyleSheet.create({
   		justifyContent: 'space-between',
   		paddingHorizontal: 20
   	},
+    botaoAcessivel1: {
+      flex: 1, 
+      height: 55, 
+      backgroundColor: 'red', 
+      marginHorizontal: 10,
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: 10,
+      backgroundColor: 'white'
+   },
    botaoAcessivel: {
       flex: 1, 
       height: 55, 
@@ -316,12 +326,17 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       alignItems: "center",
       borderRadius: 10,
-      backgroundColor: '#960500'
+      backgroundColor: 'green'
    },
    txtDetalhes:{
       fontFamily: "Open Sans ExtraBold",
       fontSize: 13,
       color: "#FFF"
+   },
+   txtDetalhes1:{
+      fontFamily: "Open Sans ExtraBold",
+      fontSize: 13,
+      color: "#999"
    },
    centeredView: {
       flex: 1,
