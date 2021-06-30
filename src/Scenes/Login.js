@@ -27,11 +27,11 @@ const Login = ({navigation}) => {
       })
       .catch(error => {
          if (error.code === 'auth/email-already-in-use') {
-            console.warn('That email address is already in use!');
+            alert('Este endereço de email já está em uso');
          }
 
          if (error.code === 'auth/invalid-email') {
-            console.warn('That email address is invalid!');
+            alert('Este email/senha é inválido');
          }
          console.warn(error);
       });
