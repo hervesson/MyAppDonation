@@ -24,11 +24,11 @@ const Subscribe = ({navigation}) => {
       })
       .catch(error => {
          if (error.code === 'auth/email-already-in-use') {
-            console.warn('That email address is already in use!');
+            alert('Este endereço de email já está em uso');
          }
 
          if (error.code === 'auth/invalid-email') {
-            console.warn('That email address is invalid!');
+            alert('Este email/senha é inválido');
          }
 
          console.error(error);
@@ -69,6 +69,7 @@ const Subscribe = ({navigation}) => {
          <View style={styles.containerSupe}>
             <Image style={styles.avatar}
                source={require('../Assets/Images/logoAB.png')}
+               resizeMode="contain"
             />
          </View>
          <View style={styles.containerInfe}>
@@ -193,8 +194,8 @@ const styles = StyleSheet.create({
       marginTop: -20
    },
    avatar: {
-      height: 181,
-      width: 130
+      height: 151,
+      width: 100
    },
    containerAdcCartao: {
       justifyContent: "center",
