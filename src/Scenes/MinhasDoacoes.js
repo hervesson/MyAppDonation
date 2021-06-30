@@ -9,7 +9,7 @@ import axios from "axios";
 const MinhasDoacoes = () => {
 	const [modalVisible, setModalVisible] = useState(false);
 	const [pagamento, setPagamento] = useState([])
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useState(true);
 	const [customerId, setCustomerId] = useState("");
 	const [data, setData] = useState([])
 
@@ -26,15 +26,14 @@ const MinhasDoacoes = () => {
    }, [])
 
 	const retrivePayments = (customer) => {
-      setIsFetching(true);
-
+  
       axios.post('https://us-central1-myappdonate.cloudfunctions.net/retrivePaymentsIntents', {
          customerId: customer
       })
       .then((response) => {
          if(response.data.data.length > 0){
             console.log(response.data.data)
-            setData(response.data.data)
+            setData(response.data.data);
          }else{
             console.log("Porra nenhuma")
          }
@@ -72,16 +71,17 @@ const MinhasDoacoes = () => {
 			<Text style={{fontFamily: 'Open Sans Light', paddingTop: 10}}>Cartão:</Text>
 			<View style={{flexDirection: 'row'}}>
 				<Text style={styles.nameCard}>
-					{item.charges.data[0].payment_method_details.card.brand}
+					{item?.charges?.data[0]?.payment_method_details?.card?.brand}
 				</Text>
 				<Text style={{paddingLeft: 10, fontFamily: 'Open Sans Regular', fontSize: 12}}>
-					**** **** **** {item.charges.data[0].payment_method_details.card.last4}
+					**** **** **** {item?.charges?.data[0]?.payment_method_details?.card?.last4}
+              
 				</Text>
 			</View>
 			<Text style={{fontFamily: 'Open Sans Light', paddingTop: 10}}>Recibo:</Text>
-			<OpenURLButton url={item.charges.data[0].receipt_url} />
+			<OpenURLButton url={item?.charges?.data[0]?.receipt_url} />
 			<Text style={{fontFamily: 'Open Sans Regular', fontSize: 12, paddingTop: 10}}>
-				Data: {new Date(item.charges.data[0].created*1000).toLocaleDateString("pt-BR")}
+				Data: {new Date(item?.charges?.data[0]?.created*1000).toLocaleDateString("pt-BR")}
 			</Text>	
 		</View>	
 		<View style={{alignItems: 'flex-end', flex: 1}}>
@@ -97,6 +97,7 @@ const MinhasDoacoes = () => {
 				})}
 			</Text>
 		</View>
+
 		</View>
   	);	
 
