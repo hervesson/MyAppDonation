@@ -16,6 +16,8 @@ target 'MyAppDonation' do
 
   pod 'react-native-fbsdk', :path => '../node_modules/react-native-fbsdk'
 
+  pod 'RNShare', :path => '../node_modules/react-native-share'
+
   target 'MyAppDonationTests' do
     inherit! :complete
     # Pods for testing
