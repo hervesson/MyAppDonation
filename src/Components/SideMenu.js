@@ -40,7 +40,7 @@ function CustomDrawerContent({props, navigation}) {
                </View>
             </View>
             <View style={styles.closeSideBar}>
-               <Icon name="close-outline" size={30} color="black" onPress={() => props.navigation.closeDrawer()}/>
+               <Icon name="close-outline" size={30} color="black" onPress={() => navigation.dispatch(DrawerActions.closeDrawer())}/>
             </View>
          </View> 
          <View style={styles.divider}></View>  
