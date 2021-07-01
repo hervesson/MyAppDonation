@@ -232,6 +232,8 @@ dependencies {
 
     implementation project(':react-native-share')
 
+    implementation project(':react-native-svg')
+
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
 }
 
