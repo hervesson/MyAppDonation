@@ -5,10 +5,6 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import CustomDrawerContent from "./src/Components/SideMenu"
 
-//signOut
-import Login from "./src/Scenes/Login"
-import Subscribe from "./src/Scenes/Subscribe"
-
 
 import AwesomePage from "./src/Scenes/AwesomePage";
 import DetalhesEntidade from "./src/Scenes/DetalhesEntidade";
@@ -22,17 +18,6 @@ import Config from "./src/Scenes/Config"
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
-export const SignedOutRoutes = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Subscribe" component={Subscribe} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
 
 export const SignedInRoutes = () => {
   return (

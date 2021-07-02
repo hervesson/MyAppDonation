@@ -19,17 +19,10 @@ const App = () => {
     	return subscriber; // unsubscribe on unmount
   	}, []);
 
-  	if (initializing) return null;
-
-  	if (!user) {
-  		return(
-  			<SignedOutRoutes />	
-  		)
-  	}else{
-  		return (
-    		<SignedInRoutes />
-  		);	
-  	}  	
+  
+  	return (
+    	<SignedInRoutes />
+  	);	 	
 }
 
 export default App
