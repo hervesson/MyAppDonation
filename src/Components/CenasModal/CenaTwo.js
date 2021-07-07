@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, ScrollView,TouchableOpacity, ActivityIndicator, Picker } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Picker, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import stripe, { StripeCardInputWidget } from '@agaweb/react-native-stripe';
 import auth from '@react-native-firebase/auth';
@@ -15,19 +15,12 @@ const CenaTwo = (props) => {
   	const [isFetching, setIsFetching] = useState(false);
   	const [displayCard, setDisplayCard] = useState(false)
   	const [selectedValue, setSelectedValue] = useState();
-  	const [customerId, setCustomerId] = useState("")
+  	const [customerId, setCustomerId] = useState("");
+	const [pagando, setPagando] = useState(false) 
+	const [salvarCartao, setSalvarCartao] = useState(false)
+	const valor = Math.round(props.valor * 100) 
 
-  	useEffect(() => {
-  		var user = auth().currentUser;
-		firestore()
-      	.collection('Doadores')
-      	.doc(user.uid)
-      	.onSnapshot(documentSnapshot => {
-      		setCustomerId(documentSnapshot.data().customerId);
-      		retriveCard(documentSnapshot.data().customerId)
-      	});
-	}, [])
-
+ 
 	const retriveCard = (customer) => {
 		setIsFetching(true);
 
@@ -37,18 +30,20 @@ const CenaTwo = (props) => {
 	  	.then((response) => {
 	  		if(response.data.data.length > 0){
 	  			setCards(response.data.data);
-	    		setSelectedValue(response.data.data[0].id);
+	    		setSelectedValue(response.data.data[0].id)
 	  		}
 	    	setIsFetching(false);
 	  	})
   		.catch(function (error) {
-    		console.warn(error);
+    		console.log(error);
   		}); 
 	}
 
 	const pay = () => {
+		setPagando(true);
+
 	   fetch(
-	      'https://api.stripe.com/v1/payment_intents?amount='+props.valor+'00&currency=brl&customer='+customerId+'&description='+props.entidade.title,
+	      'https://api.stripe.com/v1/payment_intents?amount='+valor+'&currency=brl&customer='+customerId+'&description='+props.entidade.title,
 	      {
 	         method: 'POST',
 	         headers: {
@@ -58,24 +53,31 @@ const CenaTwo = (props) => {
 	   )
       .then((response) => response.json())
       .then((response) => {
-      	console.warn(response)
+      	console.log(response.id);
+      	props.payment(response.id)
         	if (response.error) {
           	alert(response.error.message);
+          	setPagando(false);
         	} else if (response.client_secret) {
          stripe
             .confirmPaymentWithPaymentMethodId( response.client_secret, selectedValue )
-            .then(() => {
-            	//console.warn(doc)
-               props.callback("cenaThree")
+            .then((doc) => {
+            	//console.log(doc)
+               props.callback("cenaThree");
+               //props.recibo({data: new Date().getTime(), card: })
+               setPagando(false);
             })
             .catch((err) => {
               alert(err);
+              setPagando(false);
             });
         	}
       }); 
   	};
 
   	const setupIntent = () => {
+  		setSalvarCartao(true);
+
       fetch(
          'https://api.stripe.com/v1/setup_intents?customer='+customerId, {
             method: 'POST',
@@ -98,10 +100,12 @@ const CenaTwo = (props) => {
             .then((data) => {
                console.log(data);
               	retriveCard(customerId);
-              	setDisplayCard(false)
+              	setDisplayCard(false);
+              	setSalvarCartao(false)
                //alert('Successful setup');
             })
             .catch((err) => {
+            	setSalvarCartao(false)
                alert(err);
             });
          }
@@ -111,7 +115,7 @@ const CenaTwo = (props) => {
    function Renderitems(){
    	return (
    		cards.map((item, index) => 
-				<Picker.Item label={item.card.brand+ "  " +item.card.last4} value={item.id} key={item.card.id} />  
+				<Picker.Item label={item.card.brand+ "  " +item.card.last4} value={item.id} key={item.id} />  
    		)
    	)	
    }
@@ -125,7 +129,7 @@ const CenaTwo = (props) => {
       		<View  style={styles.containerDetalhe}>
       			<View style={styles.containerDescricao}>
       				<Text style={styles.txtDescricao}>
-	      				Doação para o {props.entidade.title}
+	      				Valor a ser doado para o Sem Fome
 	      			</Text>
       			</View>
       			<View style={styles.containerPreco}>
@@ -135,13 +139,13 @@ const CenaTwo = (props) => {
 	      			<Text style={styles.preco}>
 	      				{props.valor}
 	      			</Text>
-	      			<Text style={styles.centavos}>
+	      			{/*<Text style={styles.centavos}>
 	      				,00
-	      			</Text>
+	      			</Text>*/}
       			</View>
       		</View>
       		{
-      			isFetching ? <ActivityIndicator size="small" color="#0000ff"/> : 
+      			isFetching ? <ActivityIndicator size="small" color="#960500"/> : 
       				cards.length <= 0 ? 
       					<View style={{paddingHorizontal: 10}}>
 				      		<StripeCardInputWidget
@@ -150,11 +154,19 @@ const CenaTwo = (props) => {
 						            setCardParams(cardParams);
 						         }}   
 						      />
-						      <TouchableOpacity style={styles.containerAdcCartao} onPress={() => setupIntent()}>
-				               <Text style={styles.txtAdcCartao}>
-				                  Adiconar Cartao
-				               </Text>
-			            	</TouchableOpacity>
+						      {
+						      	salvarCartao ? (
+						      		<View style={styles.containerAdcCartao}>
+						      			<ActivityIndicator size="large" color="#960500"/>
+						      		</View>
+						      	) : (
+						      		<Pressable style={styles.containerAdcCartao} onPress={() => setupIntent()}  disabled={!isValid}>
+						               <Text style={styles.txtAdcCartao}>
+						                  Adicionar Cartao
+						               </Text>
+			            			</Pressable>
+						      	)
+						      }
 		      			</View>
       				:  displayCard ?
       					<View style={{paddingHorizontal: 10}}>
@@ -170,11 +182,21 @@ const CenaTwo = (props) => {
 						               Cancelar
 						            </Text>
 				         		</TouchableOpacity>
-					         	<TouchableOpacity style={styles.botaoAcessivel} onPress={() => {if(isValid == true){setupIntent()}}}>
-						            <Text style={styles.txtDetalhes}>
-						               Salvar cartão
-						            </Text>
-					         	</TouchableOpacity>
+				         		{
+				         			salvarCartao ? (
+				         				<View style={{flex: 1, justifyContent: "center"}}>
+						      				<ActivityIndicator size="large" color="#960500"/>
+						      			</View>
+						      		) : (
+
+							         	<Pressable style={styles.botaoAcessivel} onPress={() => setupIntent()} disabled={!isValid}>
+								            <Text style={styles.txtDetalhes}>
+								               Salvar cartão
+								            </Text>
+							         	</Pressable>
+						         	)
+				         		}
+				        
 								</View>
 							</View>    
 						   :
@@ -185,12 +207,13 @@ const CenaTwo = (props) => {
 					      			<Picker
 									      selectedValue={selectedValue}
 									      style={{ flex: 1}}
-									      onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+									      onValueChange={(itemValue, itemIndex) => console.log(itemValue)}
 									   >
 									      {Renderitems()}
 									   </Picker>
 					               
 				      		</View>	
+
 				      		<TouchableOpacity style={styles.containerAdcCartao} onPress={() => { setDisplayCard(true) }}>
 					               <Text style={styles.txtAdcCartao}>
 					                  Adicionar Cartao
@@ -198,12 +221,18 @@ const CenaTwo = (props) => {
 				            </TouchableOpacity>
 			            </View>
       		}
-
-				<TouchableOpacity style={styles.container} onPress={() => pay()}>
-               <Text style={styles.texto}>
-                  Efetuar Pagamento
-               </Text>
-            </TouchableOpacity>	
+      		{
+      			pagando ? (
+      				<ActivityIndicator size="large" color="#fBB600"/>
+      			) : (
+	      			<Pressable style={styles.container} onPress={() => pay()} disabled={!selectedValue || displayCard}>
+	               	<Text style={styles.texto}>
+	                  	Efetuar Pagamento
+	               	</Text>
+            		</Pressable>	
+      			)
+      		}
+				
       	</ScrollView>	
     	</View>
 	)
