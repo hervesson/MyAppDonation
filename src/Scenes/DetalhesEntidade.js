@@ -22,7 +22,10 @@ const DetalhesEntidade = ({  route, navigation  }) => {
     	setPlaying((prev) => !prev);
   	}, []);	
 
-  	const { item } = route.params;
+  	function callbackCena(){
+		setModalVisible(false);
+		navigation.navigate('MinhasDoacoes')
+	}
 
 	return (
 		<ScrollView style={{flex: 1}}>
@@ -31,7 +34,7 @@ const DetalhesEntidade = ({  route, navigation  }) => {
 	         source={require('../Assets/Images/bannerBig.png')}
 	      />
 	      <ScrollView style={styles.containerDetalhes}>
-	      	<Text style={styles.txtDetalhes}>{item.title}</Text>
+	      	<Text style={styles.txtDetalhes}>  </Text>
 	      	<View style={styles.container}>
 		      	<Text style={styles.txtDetalhes1}>
 		      		Lorem ipsum dolor sit amet, 
@@ -70,10 +73,12 @@ const DetalhesEntidade = ({  route, navigation  }) => {
 	            </Text>
          	</TouchableOpacity>
 	      </ScrollView>
-	      <Image style={styles.imageEntidade}
-				resizeMode='stretch'
-		      source={item.uri}
-	      />
+	      <View style={{position: 'absolute', marginTop: 65, alignSelf: "center", backgroundColor: 'white', padding: 10, borderRadius: 20}}>
+		      <Image style={styles.imageEntidade}
+					resizeMode='stretch'
+			      source={require('../Assets/Images/01.png')}
+		      />
+		   </View>   
 	      <Modal
 			   animationType="slide"
 			   transparent={true}
@@ -82,7 +87,7 @@ const DetalhesEntidade = ({  route, navigation  }) => {
 			>
 			  	<View style={styles.centeredView}>
           		<View style={styles.modalView}>
-		         	<DonateRoutes entidade={item}/>
+		         	<DonateRoutes  mudarCena={callbackCena}/>
 		         </View>
 		      </View>	
 	      </Modal>
@@ -96,11 +101,8 @@ const styles = StyleSheet.create({
 		alignSelf: 'center' 
 	},
 	imageEntidade: {
-		width: 113,
+		width: 153,
 		height: 102,
-		position: 'absolute',
-		marginTop: 65,
-		alignSelf: "center"
 	},
 	containerDetalhes: {
 		borderTopLeftRadius: 30,
