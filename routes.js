@@ -9,6 +9,7 @@ import CustomDrawerContent from "./src/Components/SideMenu"
 import AwesomePage from "./src/Scenes/AwesomePage";
 import DetalhesEntidade from "./src/Scenes/DetalhesEntidade";
 import ListEntidade from "./src/Scenes/ListEntidade"
+import DetalhesNoticia from "./src/Scenes/DetalhesNoticia"
 import ListAgenda from "./src/Scenes/ListAgenda"
 import DetalhesAgenda from "./src/Scenes/DetalhesAgenda"
 import Sobre from "./src/Scenes/Sobre"
@@ -25,6 +26,7 @@ export const SignedInRoutes = () => {
       <Drawer.Navigator initialRouteName="AwesomePage" drawerContent={props => <CustomDrawerContent {...props} />}>
         <Drawer.Screen name="AwesomePage" component={AwesomePage} />
         <Drawer.Screen name="DetalhesEntidade" component={DetalhesEntidade} />
+        <Drawer.Screen name="DetalhesNoticia" component={DetalhesNoticia} />
         <Drawer.Screen name="ListEntidade" component={ListEntidade} />
         <Drawer.Screen name="ListAgenda" component={ListAgenda} />
         <Drawer.Screen name="DetalhesAgenda" component={DetalhesAgenda} />
