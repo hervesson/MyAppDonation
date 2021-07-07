@@ -71,6 +71,11 @@ const ListEntidade = ({  route, navigation  }) => {
 		setEntidade(item);
 		setModalVisible(true)
 	}
+
+	function callbackCena(){
+		setModalVisible(false);
+		navigation.navigate('MinhasDoacoes')
+	}
   	
 
   	const renderItem = ({ item }) => (
@@ -129,7 +134,7 @@ const ListEntidade = ({  route, navigation  }) => {
 			   >
 			      <View style={styles.centeredView}>
           			<View style={styles.modalView}>
-		         		<DonateRoutes entidade={entidade}/>
+		         		<DonateRoutes entidade={entidade} mudarCena={callbackCena} />
 		         	</View>
 		         </View>	
 	      	</Modal>
