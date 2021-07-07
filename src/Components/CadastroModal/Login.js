@@ -100,7 +100,7 @@ const Login = (props) => {
       }
    }
 
-    const loginValidationSchema = yup.object().shape({
+   const loginValidationSchema = yup.object().shape({
       email: yup
          .string()
          .email("Por favor coloque um email válido!")
@@ -170,8 +170,10 @@ const Login = (props) => {
                      {errors.password &&
                         <Text style={{ fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', paddingLeft:10 }}>{errors.password}</Text>
                      }
-                  
+                     
+                     <TouchableOpacity onPress={() => props.callback("recuperarSenha")}>
                      <Text style={styles.forgot}>Esqueceu sua senha?</Text>
+                     </TouchableOpacity>
 
                      <TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
                         <Text style={styles.txtAdcCartao}>
