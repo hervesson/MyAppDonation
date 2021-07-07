@@ -5,10 +5,6 @@ const Sobre = () => {
 	return (
 		<View style={{flex: 1}}>
 			<View style={styles.containerSupe}>
-				<Image style={styles.avatar}
-               source={require('../Assets/Images/logoAB.png')}
-               resizeMode= 'contain'
-            />
             <View style={styles.detalhes}>
             <Text style={styles.txtDetalhes}>Doarme.me</Text>
             <Text style={styles.txtDetalhes}>Versão 0.0.1</Text>
