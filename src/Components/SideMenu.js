@@ -5,6 +5,8 @@ import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navi
 import Icon from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
 
+import User from "../Assets/Images/avatar.svg"
+
 function CustomDrawerContent({props, navigation}) {
    const [user, setUser] = useState([]);
 
@@ -31,11 +33,22 @@ function CustomDrawerContent({props, navigation}) {
       <View>
          <View style={styles.containerInfomation}>
             <View style={styles.containerUser}>
-               <Image style={styles.avatar}
-                  source={{uri: user.photoURL}}
-               />
+            {
+               user ? 
+                  <Image style={styles.avatar}
+                     source={{uri: user.photoURL}}
+                  />
+               : 
+                  <View style={{marginLeft: 10}}>
+                     <User width={40} height={40} fill="#000" />
+                  </View>
+            }
+               
                <View style={styles.infomacoesAvatar}>
-                  <Text style={styles.textAvatar}>{user.displayName}</Text>
+               {
+                  user ? <Text style={styles.textAvatar}>{user.displayName}</Text> : <Text style={styles.textAvatar}>Usuário</Text>
+               }
+                  
                   {/*<Text style={styles.textAvatar}>São luis - MA</Text>*/}
                </View>
             </View>
@@ -47,7 +60,7 @@ function CustomDrawerContent({props, navigation}) {
          <TouchableOpacity style={styles.itemMenu} onPress={() =>  navigation.navigate('Carteira')}>
             <Icon name="wallet-outline" size={30} color="#F7344B" />
             <Text style={styles.textMenu}>
-              Carteira
+              Minha Carteira
             </Text>
          </TouchableOpacity>
          <TouchableOpacity style={styles.itemMenu}  onPress={() => navigation.navigate('MinhasDoacoes')}>
@@ -56,12 +69,6 @@ function CustomDrawerContent({props, navigation}) {
               Minhas Doações
             </Text>
          </TouchableOpacity>
-         <View style={styles.itemMenu}>
-            <Icon name="heart-outline" size={30} color="#F7344B" />
-            <Text style={styles.textMenu}>
-              Entidades Favoritas
-            </Text>
-         </View>
          <TouchableOpacity style={styles.itemMenu} onPress={() => navigation.navigate('Config')}>
             <Icon name="settings-outline" size={30} color="#F7344B" />
             <Text style={styles.textMenu}>
