@@ -12,7 +12,7 @@ const ModalDoacao = ( props ) => {
    const [valor, setValor] = useState(0);
    const [recibo, setRecibo] = useState([])
    const [entidade, setEntidade] = useState("propaganeda");
-
+   const [payment, setPayment] = useState("")
    //console.warn(props.entidade)
 
 	function callbackFuncao(values, valor){
@@ -20,14 +20,18 @@ const ModalDoacao = ( props ) => {
       valor ? setValor(valor) : null 
 	};
 
-   function callbackRecibo(recibo){
-      recibo ? setRecibo(recibo) : null 
+   function callbackCena(){
+      props.mudarCena()
    };
+
+   function callbackPayment(pay){
+      setPayment(pay)
+   }
 
 	useEffect(() => {
     	switch (componentName) {
       	case "cenaDois":
-        		setActiveComponent(<CenaTwo callback={callbackFuncao} valor={valor} entidade={props.entidade} recibo={callbackRecibo} />);
+        		setActiveComponent(<CenaTwo callback={callbackFuncao} valor={valor} entidade={props.entidade} payment={callbackPayment} />);
         	break;
 
          case "cenaThree":
@@ -35,7 +39,7 @@ const ModalDoacao = ( props ) => {
          break;
 
          case "cenaFour":
-            setActiveComponent(<CenaFour entidade={props.entidade} valor={valor} recibo={recibo} />);
+            setActiveComponent(<CenaFour entidade={props.entidade} valor={valor} cena={callbackCena} payment={payment} />);
          break;
 
       	default:
