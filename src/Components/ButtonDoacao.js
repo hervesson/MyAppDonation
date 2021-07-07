@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Animated  } from "react-native";
 
 const { width, height } = Dimensions.get('window');
-const altPhoto = width * 0.8
 const altura = height-30;
 
 export default class ButtonConversa extends Component {
@@ -23,9 +22,9 @@ const styles = StyleSheet.create({
  	animated:{
  		flex: 1,
       paddingTop: 25,
-    	//position: "absolute",
+    	position: "absolute",
     	width,
-    	//height: altura,
+    	height: altura,
     	alignItems: "center",
     	justifyContent: "flex-end",
     },
