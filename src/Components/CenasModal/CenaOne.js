@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, ScrollView, Dimensions, TouchableOpacity
 import { Picker } from '@react-native-picker/picker';
 import Slider from '@react-native-community/slider';
 import { TextInputMask } from 'react-native-masked-text'
+import CurrencyInput from 'react-native-currency-input';
 
 
 const windowWidth = Dimensions.get('window').width;
@@ -12,7 +13,7 @@ const CenaOne = ( props ) => {
 	const [weight, setWeight] = useState(1);
 	const [valorFinal, setValorFInal] = useState(45)
 	const [slider, setSlider] = useState(true)
-	//const [valor, setValor] = useState("")
+	const [erro, setErro] = useState(false)
 	
 	const valorCalculate = () => {
     	const valor = weight*45;
@@ -26,6 +27,16 @@ const CenaOne = ( props ) => {
   			setValorFInal(vem)
   		}
    }
+
+   const verificador = () => {
+   	if(valorFinal > 0){
+   		props.callback("cenaDois", valorFinal)
+   	}else{
+   		setErro(true)
+   	}
+   }
+
+   
 
   	return (
     	<View>
@@ -53,15 +64,18 @@ const CenaOne = ( props ) => {
 	            	source={require('../../Assets/Images/fotoDeCapa.png')}
 	         	/>
 	         	<View style={styles.containerImgEntidade}>
-	         		<Image style={styles.imgEntidade}
-	            		source={props.entidade.uri}
-	         		/>
+	         		<View style={{backgroundColor: 'white', marginTop: -50, padding: 10, borderRadius: 15}}>
+		         		<Image style={styles.imgEntidade}
+		            		source={require('../../Assets/Images/04.png')}
+		            		resizeMode="contain"
+		         		/>
+	         		</View>
 	         		<View>
-	         			<Text style={styles.tituloEntidade}>{props.entidade.title}</Text>
+	         			<Text style={styles.tituloEntidade}>Sem Fome</Text>
 	         			<Text style={styles.descricaoEntidade}>Lorem ipsum dolor</Text>
 	         		</View>
 	         	</View>
-      		</View>
+      		</View> 
       		<View style={styles.descricao}>
       			<Text style={styles.txtDescricao}>
       				Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -77,56 +91,55 @@ const CenaOne = ( props ) => {
 	            	source={require('../../Assets/Images/duasCestas.png')}
 	         	/>
       		</View>
-      		{
-      			slider ? 
-      				<View>
-      				<View style={styles.containerSlide}>
-	      				<Slider
-					         style={{windowWidth}}
-					         minimumValue={1}
-					         maximumValue={20}
-					         minimumTrackTintColor={"#fbb600"}
-					         maximumTrackTintColor={"black"}
-					         thumbTintColor={"#fbb600"}
-					         onValueChange={(v) => setWeight(v)}
-					        	onSlidingComplete={(_) => valorCalculate()}
-					         value={weight}
-					         step={1}
-			      		/>
-						</View>
-						<TouchableOpacity style={{paddingTop: 10, paddingLeft: 10}} onPress={() => setSlider(false)}>
-							<Text style={{fontFamily: 'Open Sans Regular'}}>Deseja doar outro valor?</Text>
-						</TouchableOpacity>
-						</View>
-					: 
-						<View style={styles.containerInput}>
-							<Text style={{paddingLeft: 10}}>R$</Text>
-							<TextInput
-							 	style={{flex: 1}}
-							 	placeholder="Digite o valor Aqui"
-							 	value={valorFinal}
-            				onChangeText={(text) => cifrao(text) } 
-							 	keyboardType="decimal-pad"
-							/>
-							<TouchableOpacity style={styles.botoesInput} onPress={() => {setSlider(true); valorCalculate()}}>
-								<Text>Cancelar</Text>
-							</TouchableOpacity>
-						</View>
-      		}
       		
-
+      		<View style={styles.containerSlide}>
+	      		<Slider
+					   style={{windowWidth}}
+					   minimumValue={1}
+					   maximumValue={20}
+					   minimumTrackTintColor={"#fbb600"}
+					   maximumTrackTintColor={"black"}
+					   thumbTintColor={"#fbb600"}
+					   onValueChange={(v) => setWeight(v)}
+					   onSlidingComplete={(_) => valorCalculate()}
+					   value={weight}
+					   step={1}
+			      />
+				</View>
+				
 				<View style={styles.containerDinheiro}>
 					<Text style={styles.txtCifrao}>
 						R$
 					</Text>
-					<Text style={styles.txtValor}>
+					<CurrencyInput
+				      value={valorFinal}
+				      style={styles.txtValor}
+				      onChangeValue={setValorFInal}
+				      unit="$"
+				      delimiter=","
+				      separator="."
+				      precision={2}
+				      onChangeText={(formattedValue) => {
+				        console.log(formattedValue); // $2,310.46
+				      }}
+				   />
+
+					{/*<Text style={styles.txtValor}>
 						{valorFinal}
 					</Text>
-					{/*<Text style={styles.txtCifrao}>
+					<Text style={styles.txtCifrao}>
 						,00
 					</Text>*/}
 				</View>
-				<TouchableOpacity style={styles.container} onPress={() => { props.callback("cenaDois", valorFinal)}}>
+				{
+					erro ? 
+						<Text style={{alignSelf: "center", fontFamily: "Open Sans Regular", color: "red"  }}>
+							Informe o valor da sua doação
+						</Text>
+					: null
+				}
+				
+				<TouchableOpacity style={styles.container} onPress={() => verificador()}>
                <Text style={styles.texto}>
                   Confirmar Doação
                </Text>
@@ -173,8 +186,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	imgEntidade: {
-		height: 76,
-		width: 66
+		height: 96,
+		width: 76
 	},
 	tituloEntidade : {
 		fontFamily: 'Open Sans ExtraBold',
