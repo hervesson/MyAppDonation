@@ -21,19 +21,23 @@ const DetalhesEntidade = ({  route, navigation  }) => {
   	}, []);
 	
 	const onShare = async () => {
-    try {
-      const result = await Share.share({
-        	title: "Novo evento",//string
-        	message: "Esse é um evento de teste, vamos ajudar",//string
-         url: "https://img.freepik.com/fotos-gratis/flor-rosa-que-floresce-no-campo-que-floresce-no-jardim_78773-264.jpg?size=626&ext=jpg",
-      });
-      
-    } catch (error) {
-      alert(error.message);
-    }
-  };
+    	try {
+      	const result = await Share.share({
+        		title: "Novo evento",//string
+        		message: "Esse é um evento de teste, vamos ajudar",//string
+         	url: "https://img.freepik.com/fotos-gratis/flor-rosa-que-floresce-no-campo-que-floresce-no-jardim_78773-264.jpg?size=626&ext=jpg",
+      	});
+    	} catch (error) {
+      	alert(error.message);
+    	}
+  	};
 	
   	const { item } = route.params;
+
+  	function callbackCena(){
+		setModalVisible(false);
+		navigation.navigate('MinhasDoacoes')
+	}
 
 	return (
 		<ScrollView style={{flex: 1}}>
@@ -126,7 +130,7 @@ const DetalhesEntidade = ({  route, navigation  }) => {
 			>
 			  	<View style={styles.centeredView}>
           		<View style={styles.modalView}>
-		         	<DonateRoutes entidade={item}/>
+		         	<DonateRoutes entidade={item} mudarCena={callbackCena} />
 		         </View>
 		      </View>	
 	      </Modal>
