@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ImageBackground, StyleSheet, ScrollView, StatusBar, FlatList, Pressable, Alert, Dimensions, Modal, TextInput, TouchableOpacity  } from 'react-native';
+import { View, Text, Image, ImageBackground, StyleSheet, ScrollView, StatusBar, FlatList, Pressable, Alert, Dimensions, Modal, TextInput, TouchableOpacity, Button} from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
 import {  DrawerActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ButtonDoacao from "../Components/ButtonDoacao"
 import CadastroRoutes from "../Components/ModalCadastro"
 import auth from '@react-native-firebase/auth';
+
+import Reactotron from 'reactotron-react-native'
+import api from "../Services/Api"
 
 import User from "../Assets/Images/avatar.svg"
 
@@ -16,21 +19,15 @@ const AwesomePage = ({ navigation }) => {
 	const [user, setUser] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [activeCene, setActiveCene] = useState("");
-	const [usuario, setUsuario] = useState("doador")
+	const [usuario, setUsuario] = useState(false)
 
 	useEffect(() => {
-		var user = auth().currentUser;
-		var name, email, photoUrl, uid, emailVerified;
-
-
-		if (user != null) {
-		  name = user.displayName;
-		  email = user.email;
-		  photoUrl = user.photoURL;
-		  emailVerified = user.emailVerified;
-		  uid = user.uid; 
-		}
-		setUser(user);
+		api.get('/events')
+    	.then((response) => {
+    		Reactotron.log(response.data)	
+    	}).catch(function (error) {
+         console.log(error);
+      }); 
 	}, []);
 
   	const ENTIDADES = [
@@ -267,7 +264,7 @@ const AwesomePage = ({ navigation }) => {
 		      	</View>
 		      </View>
       	</Modal>
-
+      	
       	<View style={styles.viewButton} />
 
 		</ScrollView>
