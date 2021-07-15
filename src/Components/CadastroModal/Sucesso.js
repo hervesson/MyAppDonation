@@ -6,7 +6,7 @@ const Sucesso = () => {
 	return (
 		<View style={{flex: 1}}>
 			<View style={{flex: 1}}>
-				<Text style={styles.titulo}>Cadastro Beneficiário</Text>
+				<Text style={styles.titulo}>Cadastro</Text>
 			</View>
 			<View style={{flex: 4, paddingTop: 100, alignItems: "center" }}>
 				<Icon name="checkmark-circle-outline" size={150} color="green" />
