@@ -1,23 +1,40 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Formik } from 'formik'
 import * as yup from 'yup'
+import SelectPhoto from "../SelectPhoto"
 
 const CadastroDoador = (props) => {
+   const [abrir, setAbrir] = useState(0)
+   const [photo, setPhoto] = useState([])
+
+   function callbackFuncao(response){
+      setPhoto(response);
+   };
+
 	return (
 		<ScrollView style={{flex: 1}}>
 			<Text style={styles.titulo}>Cadastro Doador</Text>
 			<View style={{alignItems: "center" }}>
-				<View style={styles.fotoDePerfil}>
-					<Icon name="camera" size={35} color="black" />
-				</View>
+				<TouchableOpacity style={styles.fotoDePerfil} onPress={() => setAbrir(abrir + 1)}>
+					<SelectPhoto 
+                  callback={callbackFuncao} 
+                  abrir={abrir} 
+                  height={130} 
+                  width={130}
+                  borderRadius={65}
+               /> 
+               {
+                  photo.length == 0 ? <Icon name="camera" size={35} color="black" /> : null
+               }
+				</TouchableOpacity>
 				<Text style={styles.txtFoto}>Foto de Perfil</Text>
 			</View>
 			<View style={{marginTop: 25}}>
             <Formik
                //validationSchema={cadastroValidationSchema}
-               initialValues={{ nome: '', Telefone: '', CPF: '', DataDeNascimento: ''}}
+               initialValues={{nome: '', Telefone: '', senha: ''}}
                onSubmit={values => {props.callback("sucess")}}
             >
             {({
@@ -58,6 +75,21 @@ const CadastroDoador = (props) => {
                         <Text style={styles.erros}>{errors.Telefone}</Text>
                      }
 
+                     <View style={styles.input}>
+                        <TextInput
+                           autoCapitalize="none"
+                           name="senha"
+                           placeholder="Senha"
+                           style={{flex: 1}}
+                           onChangeText={handleChange('senha')}
+                           onBlur={handleBlur('senha')}
+                           value={values.senha} 
+                        />
+                     </View>    
+                     {errors.senha &&
+                        <Text style={styles.erros}>{errors.senha}</Text>
+                     }
+
                      <TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
                         <Text style={styles.txtAdcCartao}>
                            Cadastrar
@@ -81,12 +113,12 @@ const styles = StyleSheet.create({
 	},
 	fotoDePerfil: {
 		marginTop: 25,
-		alignItems: 'center',
-		backgroundColor: '#e9e9e9',
-		height: 100, 
-		width: 100, 
-		borderRadius: 50, 
-		justifyContent: "center"
+      alignItems: 'center',
+      backgroundColor: '#e9e9e9',
+      height: 130, 
+      width: 130, 
+      borderRadius: 65, 
+      justifyContent: "center"
 	},
 	txtFoto: {
 		fontFamily: 'Open Sans SemiBold',
