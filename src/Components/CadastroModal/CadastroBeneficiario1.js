@@ -1,13 +1,19 @@
-import React from 'react'
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native'
+import React, { useState, useCallback } from 'react'
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ScrollView, Button, Alert } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Formik } from 'formik'
-import * as yup from 'yup'
+import * as yup from 'yup';
 
 import StepByStep from "../StepByStep"
+import SelectPhoto from "../SelectPhoto"
 
 const CadastroBeneficiario1 = (props) => {
+   const [abrir, setAbrir] = useState(0)
+   const [photo, setPhoto] = useState([])
 
+   function callbackFuncao(response){
+      setPhoto(response);
+   };
 
 	const cadastroValidationSchema = yup.object().shape({
       nome: yup
@@ -27,15 +33,26 @@ const CadastroBeneficiario1 = (props) => {
          .required('Infome sua data de nascimento'),   
    })
 
+   
+
 	return (
 		<ScrollView style={{flex: 1}}>
 			<Text style={styles.titulo}>Cadastro Beneficiário</Text>
 			<StepByStep corOne="#960500" corTwo="#e9e9e9" corThree="#e9e9e9" />
 			<View style={{alignItems: "center" }}>
 				<Text style={{fontFamily: 'Open Sans Regular', marginTop: 25}}>Dados Pessoais</Text>
-				<View style={styles.fotoDePerfil}>
-					<Icon name="camera" size={35} color="black" />
-				</View>
+				<TouchableOpacity style={styles.fotoDePerfil} onPress={() => setAbrir(abrir + 1)}>
+               <SelectPhoto 
+                  callback={callbackFuncao} 
+                  abrir={abrir} 
+                  height={130} 
+                  width={130}
+                  borderRadius={65}
+               /> 
+               {
+                  photo.length == 0 ? <Icon name="camera" size={35} color="black" /> : null
+               }
+				</TouchableOpacity>
 				<Text style={styles.txtFoto}>Foto de Perfil</Text>
 			</View>
 			<View style={{marginTop: 25}}>
@@ -127,6 +144,10 @@ const CadastroBeneficiario1 = (props) => {
 }
 
 const styles = StyleSheet.create({
+   image: {
+    marginVertical: 24,
+    alignItems: 'center',
+  },
 	titulo: {
 		fontFamily: "Open Sans SemiBold",
 		fontSize: 14,
@@ -137,9 +158,9 @@ const styles = StyleSheet.create({
 		marginTop: 25,
 		alignItems: 'center',
 		backgroundColor: '#e9e9e9',
-		height: 100, 
-		width: 100, 
-		borderRadius: 50, 
+		height: 130, 
+		width: 130, 
+		borderRadius: 65, 
 		justifyContent: "center"
 	},
 	txtFoto: {
@@ -166,7 +187,6 @@ const styles = StyleSheet.create({
       borderRadius: 80,
       backgroundColor: "#960500",
       alignSelf: 'center',
-      marginVertical: 10,
       marginVertical: 25,
 
    },
@@ -182,7 +202,12 @@ const styles = StyleSheet.create({
       fontFamily: 
       'Open Sans Regular', 
       paddingLeft:10 
-   }
+   },
+   image: {
+      marginVertical: 24,
+      alignItems: 'center',
+   },
 })
+
 
 export default CadastroBeneficiario1

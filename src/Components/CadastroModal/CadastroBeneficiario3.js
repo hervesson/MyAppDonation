@@ -1,10 +1,18 @@
-import React from 'react'
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useState, useEffect} from 'react'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import SelectPhoto from "../SelectPhoto"
 import StepByStep from "../StepByStep"
 
 const CadastroBeneficiario3 = (props) => {
+	const [abrir, setAbrir] = useState(0);
+	const [photo, setPhoto] = useState([]);
+
+	function callbackFuncao(response){
+      setPhoto(response);
+   };
+
 	return (
 		<View style={{flex: 1}}>
 			<View style={{flex: 1}}>
@@ -13,10 +21,31 @@ const CadastroBeneficiario3 = (props) => {
 				<Text style={{fontFamily: 'Open Sans Regular', marginTop: 25, textAlign: "center" }}>Confirmar Dados</Text>
 			</View>
 			<View style={{flex:3, alignItems: "center"}}>
-				<View style={styles.fotoDePerfil}>
-					<Icon name="camera" size={55} color="black" />
-				</View>
-				<View style={{width: 200}}>
+				<TouchableOpacity style={styles.fotoDePerfil} onPress={() => setAbrir(abrir + 1)}>
+				<SelectPhoto 
+               callback={callbackFuncao} 
+               abrir={abrir}
+               height={200} 
+               width={300}
+               borderRadius={5}
+               marginVertical={30}
+            />
+            {
+               photo.length == 0 ? 
+               	<Image
+				         resizeMode="contain"
+				         //resizeMethod="scale"
+				         style={{
+                        width:"100%",
+                        height:"100%"
+                     }}
+				         source={require("../../Assets/Images/identidade.jpeg")}
+				      />  
+               : null
+            }
+				</TouchableOpacity>
+				{/*<Icon name="camera" size={55} color="black" />*/}
+				<View style={{width: 200, paddingTop: 20}}>
 					<Text style={styles.txtFoto}>
 						Envie uma Selfie segurando o documento enviado na tela anterior. 
 						A foto terá que ser bem nítida e mostrar seu rosto e o seu documento de forma legível
@@ -41,14 +70,11 @@ const styles = StyleSheet.create({
 		paddingTop: 25
 	},
 	fotoDePerfil: {
-		marginTop: 25,
 		alignItems: 'center',
 		backgroundColor: '#e9e9e9',
-		height: 150, 
-		width: 150, 
-		borderRadius: 75, 
+		height: 200, 
+		width: 300, 
 		justifyContent: "center",
-		marginTop: 60
 	},
 	txtFoto: {
 		fontFamily: 'Open Sans SemiBold',
