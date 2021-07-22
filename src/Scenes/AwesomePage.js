@@ -19,56 +19,22 @@ const AwesomePage = ({ navigation }) => {
 	const [user, setUser] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [activeCene, setActiveCene] = useState("");
-	const [usuario, setUsuario] = useState(false)
+	const [usuario, setUsuario] = useState(false);
+	const [noticias, setNoticias] = useState([]);
+	const [eventos, setEventos] = useState([])
 
 	useEffect(() => {
-		api.get('/events')
-    	.then((response) => {
-    		Reactotron.log(response.data)	
+		api.get('/posts').then((response) => {
+    		setNoticias(response.data.data); 
+    	}).catch(function (error) {
+         console.log(error); 
+      });
+      api.get('/events').then((response) => {
+    		setEventos(response.data.data)
     	}).catch(function (error) {
          console.log(error);
       }); 
-	}, []);
-
-  	const ENTIDADES = [
-	  	{
-	    	uri: require('../Assets/Images/lar.png'),
-	    	title: 'Instituição Lar de Maria',
-	  	},
-	  	{
-	    	uri: require('../Assets/Images/santo.png'),
-	    	title: 'Lar Santo Antonio',
-	  	},
-	  	{
-	    	uri: require('../Assets/Images/paz.png'),
-	    	title: 'Instituição Paz e Bem',
-	  	},
-	  	{
-	    	uri: require('../Assets/Images/nosso.png'),
-	    	title: 'Nosso lar',
-	  	}
-	];
-
-	const AGENDA = [
-	  	{
-	    	uri: require('../Assets/Images/agenda1.png'),
-	    	title: "Deu a louca na Chef",
-	    	dia: "02/02/2022",
-	    	noticia: "....A chef ficou louca..."
-	  	},
-	  	{
-	    	uri: require('../Assets/Images/agenda2.png'),
-	    	title: "Juntos pela Vila Gilda",
-	    	dia: "12/06/2022",
-	    	noticia: "....Vamos se juntar todos pela vila Gilda..."	
-	  	},
-	  	{
-	    	uri: require('../Assets/Images/agenda3.png'),
-	    	title: "Juntos pelo Ronald",
-	    	dia: "8/12/2022",
-	    	noticia: "....Vamos se juntar todos pela Ronald..."	
-	  	}
-	];
+	}, [])
 
 	const DOACOES = [
 	  	{
@@ -144,7 +110,7 @@ const AwesomePage = ({ navigation }) => {
 				</View>
 
 				<TouchableOpacity style={styles.containerSearchBar} onPress={() => AbrirModal("logar")}>
-					<Text style={styles.txtPrincipal}>Entre ou cadastre-se</Text>
+					<Text style={styles.txtPrincipal}>Entrar</Text>
 					{
 						user ?
 							<Image style={styles.avatar}
@@ -164,7 +130,7 @@ const AwesomePage = ({ navigation }) => {
 				    			Precisando de auxílio ?
 				    		</Text>
 				    		<TouchableOpacity style={{height: 30, backgroundColor: "#fbb600", width: 100, justifyContent: "center", alignItems: "center", borderRadius: 30  }}
-				    			onPress={() => AbrirModal("cadastroBeneficiario1")}>
+				    			onPress={() => AbrirModal("cadastroBeneficiario4")}>
 					    		<Text style={{fontFamily: "Open Sans SemiBold", fontSize: 14, color: "white"}}>
 					    			Cadastre-se
 					    		</Text>
@@ -229,10 +195,11 @@ const AwesomePage = ({ navigation }) => {
          </TouchableOpacity>
          <View style={styles.containerFlatList}>
 		      <FlatList
-		        	data={AGENDA}
+		        	data={eventos}
 		        	renderItem={renderAgenda}
-		        	keyExtractor={item => item.title}
+		        	keyExtractor={item => item.id}
 		        	horizontal={true} 
+		        	refreshing={true}
 		      />
     		</View>
 
@@ -242,10 +209,11 @@ const AwesomePage = ({ navigation }) => {
          		<Icon name="arrow-forward-outline" size={23} color="black" />
          	</View>
 		      <FlatList
-		        	data={AGENDA}
+		        	data={noticias}
 		        	renderItem={renderNoticias}
-		        	keyExtractor={item => item.title}
+		        	keyExtractor={item => item.id}
 		        	horizontal={true} 
+		        	refreshing={true}
 		      />
     		</View>
 
@@ -264,7 +232,7 @@ const AwesomePage = ({ navigation }) => {
 		      	</View>
 		      </View>
       	</Modal>
-      	
+
       	<View style={styles.viewButton} />
 
 		</ScrollView>
