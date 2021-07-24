@@ -4,90 +4,142 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import SelectPhoto from "../SelectPhoto"
+import { TextInputMask } from 'react-native-masked-text'
+import { Helpers } from "../../Services/Helpers"
+
+const helperService = new Helpers();
 
 const CadastroDoador = (props) => {
-   const [abrir, setAbrir] = useState(0)
-   const [photo, setPhoto] = useState([])
+   const [abrir, setAbrir] = useState(0);
+   const [photo, setPhoto] = useState([]);
 
-   function callbackFuncao(response){
-      setPhoto(response);
-   };
+   var phoneRegEx = /(\(?\d{2}\)?\s)?(\d{5}\-\d{4})/g
+   const cadastroValidationSchema = yup.object().shape({
+      photo: yup.object().required('Você precisa colocar a foto'),
+      fullName: yup
+         .string()
+         .matches(/(\w.+\s).+/, 'Coloque seu nome completo')
+         .required('Informe seu nome completo'),
+      phoneNumber: yup
+         .string()
+         .matches(phoneRegEx, 'Coloque um número de telefone válido')
+         .required('Informe o numero do seu telefone'),
+      password: yup
+         .string()
+         .min(6, ({ min }) => `A senha precisa ter ${min} caracteres`)
+         .required('Por favor coloque a senha!'),
+      confirmPassword: yup
+         .string()
+         .oneOf([yup.ref('password')], 'As senhas não conferem')
+         .required('Confirme sua senha'),
+   })
 
 	return (
 		<ScrollView style={{flex: 1}}>
 			<Text style={styles.titulo}>Cadastro Doador</Text>
-			<View style={{alignItems: "center" }}>
-				<TouchableOpacity style={styles.fotoDePerfil} onPress={() => setAbrir(abrir + 1)}>
-					<SelectPhoto 
-                  callback={callbackFuncao} 
-                  abrir={abrir} 
-                  height={130} 
-                  width={130}
-                  borderRadius={65}
-               /> 
-               {
-                  photo.length == 0 ? <Icon name="camera" size={35} color="black" /> : null
-               }
-				</TouchableOpacity>
-				<Text style={styles.txtFoto}>Foto de Perfil</Text>
-			</View>
 			<View style={{marginTop: 25}}>
             <Formik
-               //validationSchema={cadastroValidationSchema}
-               initialValues={{nome: '', Telefone: '', senha: ''}}
-               onSubmit={values => {props.callback("sucess")}}
+               validationSchema={cadastroValidationSchema}
+               initialValues={{fullName: '', phoneNumber: '', password: '', confirmPassword: ''}}
+               onSubmit={values => helperService.createDonator(photo, values)}
             >
             {({
                handleChange,
                handleBlur,
                handleSubmit,
+               setFieldValue,
+               setFieldTouched,
                values,
                errors,
                isValid,
                   }) => (
                     <>
+                     <View style={{alignItems: "center" }}>
+                        <TouchableOpacity style={styles.fotoDePerfil} onPress={() => setAbrir(abrir + 1)}>
+                           <SelectPhoto 
+                              callback={(response) => {setPhoto(response); setFieldValue('photo', response )}} 
+                              abrir={abrir} 
+                              height={130} 
+                              width={130}
+                              borderRadius={65}
+                           /> 
+                           {
+                              photo.length == 0 ? <Icon name="camera" size={35} color="black" /> : null
+                           }
+                        </TouchableOpacity>
+                        {errors.photo  &&
+                           <Text style={{fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', textAlign: "center"}}>
+                              {errors.photo}
+                           </Text>
+                        }
+                        <Text style={styles.txtFoto}>Foto de Perfil</Text>
+                     </View>
                      <View style={styles.input}>
                         <TextInput
-                           autoCapitalize="none"
-                           name="nome"
+                           name="fullName"
                            placeholder="Nome completo"
                            style={{flex: 1}}
-                           onChangeText={handleChange('nome')}
-                           onBlur={handleBlur('nome')}
-                           value={values.nome}
+                           onChangeText={handleChange('fullName')}
+                           onBlur={handleBlur('fullName')}
+                           value={values.fullName}
                         />
                      </View>   
-                     {errors.nome &&
-                        <Text style={styles.erros}>{errors.nome}</Text>
+                     {errors.fullName &&
+                        <Text style={styles.erros}>{errors.fullName}</Text>
                      }
+
                      <View style={styles.input}>
-                        <TextInput
+                        <TextInputMask
+                           type={'cel-phone'}
+                           options={{
+                              maskType: 'BRL',
+                              withDDD: true,
+                              dddMask: '(99) '
+                           }}
                            autoCapitalize="none"
-                           name="Telefone"
+                           name="phoneNumber"
                            placeholder="Telefone"
                            style={{flex: 1}}
-                           onChangeText={handleChange('Telefone')}
-                           onBlur={handleBlur('Telefone')}
-                           value={values.Telefone} 
+                           onChangeText={handleChange('phoneNumber')}
+                           onBlur={handleBlur('phoneNumber')}
+                           value={values.phoneNumber}
                         />
+
                      </View>    
-                     {errors.Telefone &&
-                        <Text style={styles.erros}>{errors.Telefone}</Text>
+                     {errors.phoneNumber &&
+                        <Text style={styles.erros}>{errors.phoneNumber}</Text>
                      }
 
                      <View style={styles.input}>
                         <TextInput
                            autoCapitalize="none"
-                           name="senha"
+                           name="password"
                            placeholder="Senha"
                            style={{flex: 1}}
-                           onChangeText={handleChange('senha')}
-                           onBlur={handleBlur('senha')}
-                           value={values.senha} 
+                           onChangeText={handleChange('password')}
+                           onBlur={handleBlur('password')}
+                           value={values.password} 
+                           secureTextEntry={true}
                         />
                      </View>    
-                     {errors.senha &&
-                        <Text style={styles.erros}>{errors.senha}</Text>
+                     {errors.password &&
+                        <Text style={styles.erros}>{errors.password}</Text>
+                     }
+
+                     <View style={styles.input}>
+                        <TextInput
+                           autoCapitalize="none"
+                           name="confirmPassword"
+                           placeholder="Confirme a senha"
+                           style={{flex: 1}}
+                           onChangeText={handleChange('confirmPassword')}
+                           onBlur={handleBlur('confirmPassword')}
+                           value={values.confirmPassword} 
+                           secureTextEntry={true}
+                        />
+                     </View>    
+                     {errors.confirmPassword &&
+                        <Text style={styles.erros}>{errors.confirmPassword}</Text>
                      }
 
                      <TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
@@ -112,7 +164,7 @@ const styles = StyleSheet.create({
 		paddingTop: 25
 	},
 	fotoDePerfil: {
-		marginTop: 25,
+		//marginTop: 5,
       alignItems: 'center',
       backgroundColor: '#e9e9e9',
       height: 130, 
@@ -123,7 +175,8 @@ const styles = StyleSheet.create({
 	txtFoto: {
 		fontFamily: 'Open Sans SemiBold',
 		color: "#960500",
-		paddingTop: 10
+		paddingTop: 10,
+      marginBottom: 25
 	},
    input: {
       height: 60,
@@ -157,9 +210,8 @@ const styles = StyleSheet.create({
    erros: { 
       fontSize: 10, 
       color: 'red', 
-      fontFamily: 
-      'Open Sans Regular', 
-      paddingLeft:10 
+      fontFamily: 'Open Sans Regular', 
+      paddingLeft:15 
    }
 })
 
