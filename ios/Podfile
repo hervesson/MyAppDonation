@@ -24,6 +24,10 @@ target 'MyAppDonation' do
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+
+  pod 'react-native-date-picker', :path => '../node_modules/react-native-date-picker'
+
   target 'MyAppDonationTests' do
     inherit! :complete
     # Pods for testing
