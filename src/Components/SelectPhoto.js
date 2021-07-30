@@ -82,7 +82,7 @@ const SelectPhoto = (props) => {
       if (isCameraPermitted && isStoragePermitted) {
       ImagePicker.launchCamera(options, (response) => {
          console.log('Response = ', response);
-         props.callback(response);
+         props.callback(response?.assets[0]);
 
          if (response.didCancel) {
             alert('User cancelled camera picker');
@@ -97,13 +97,6 @@ const SelectPhoto = (props) => {
             alert(response.errorMessage);
             return;
          }
-            console.log('base64 -> ', response.base64);
-            console.log('uri -> ', response.uri);
-            console.log('width -> ', response.width);
-            console.log('height -> ', response.height);
-            console.log('fileSize -> ', response.fileSize);
-            console.log('type -> ', response.type);
-            console.log('fileName -> ', response.fileName);
             setFilePath(response);
          });
       }
@@ -119,7 +112,7 @@ const SelectPhoto = (props) => {
       };
       ImagePicker.launchImageLibrary(options, (response) => {
          console.log('Response = ', response);
-         props.callback(response);
+         props.callback(response?.assets[0]);
 
          if (response.didCancel) {
             alert('User cancelled camera picker');
@@ -134,13 +127,6 @@ const SelectPhoto = (props) => {
            alert(response.errorMessage);
            return;
          }
-         console.log('base64 -> ', response.base64);
-         console.log('uri -> ', response.uri);
-         console.log('width -> ', response.width);
-         console.log('height -> ', response.height);
-         console.log('fileSize -> ', response.fileSize);
-         console.log('type -> ', response.type);
-         console.log('fileName -> ', response.fileName);
          setFilePath(response);
       });
    };
@@ -152,6 +138,7 @@ const SelectPhoto = (props) => {
 				filePath?.assets ?
 				   filePath?.assets.map(({uri}) => (
 				      <Image
+                     key={uri}
 				         resizeMode="cover"
 				         resizeMethod="scale"
 				         style={{
