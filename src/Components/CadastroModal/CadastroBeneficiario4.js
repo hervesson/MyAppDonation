@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from "axios";
 import { Formik } from 'formik'
@@ -11,6 +11,9 @@ import { TextInputMask } from 'react-native-masked-text';
 import SelectPhoto from "../SelectPhoto"
 import StepByStep from "../StepByStep"
 
+import { Helpers } from "../../Services/Helpers"
+const helperService = new Helpers();
+
 const CadastroBeneficiario4 = (props) => {
    const [cep, setCep] = useState("")
    const [uf, setUf] = useState("")
@@ -18,14 +21,15 @@ const CadastroBeneficiario4 = (props) => {
    const [bairro, setBairro] = useState("")
    const [logradouro, setLogradouro] = useState("")
    const [complemento, setComplemento] = useState("")
-   const [errorCep, seErrorCep] = useState(false);
 
    const [abrir, setAbrir] = useState(0);
    const [photo, setPhoto] = useState([]);
    const [selectedEstado, setSelectedEstado] = useState();
    const [provincias, setProvincias] = useState([]);
    const [selectedCidade, setSelectedCidade] = useState();
-   const [cidade, setCidade] = useState([])
+   const [cidade, setCidade] = useState([]);
+   const [show, setShow] = useState(false);
+   
 
    useEffect(() => {
       api.get('/provinces').then((response) => {
@@ -37,35 +41,41 @@ const CadastroBeneficiario4 = (props) => {
 
    function procurarCidade(city){
       api.get('/cities?province='+city).then((response) => {
-         setCidade(response.data); console.log(response.data)
+         setCidade(response.data)
       }).catch(function (error) {
          console.log(error); 
       }); 
    }
 
-   function callbackFuncao(response){
-      setPhoto(response);
-   };
-
-   const BucarCep = (text) => {
-      setCep(text);
-      if(text.length == 9){
-         axios.get("https://viacep.com.br/ws/"+text+"/json/").then(response => {
-            if(response.data.cep == text){
-               setCep(response.data.cep), 
-               setUf(response.data.uf)
-               setLocalidade(response.data.localidade)
-               setBairro(response.data.bairro)
-               setLogradouro(response.data.logradouro)
-               setComplemento(response.data.complemento)
-               seErrorCep(false)
-            }else{
-               seErrorCep("Cep não encontrado")
-            }  
-         });
-      }
-   }
-
+   const cadastroValidationSchema = yup.object().shape({
+      cep: yup
+         .string()
+         .matches(/^\d{5}-\d{3}$/, 'Coloque um CEP válido!')
+         .required('Informe seu CEP'),
+      endereco: yup
+         .string()
+         .required('Informe seu endereço'),
+      bairro: yup
+         .string()
+         .required('Informe seu bairro'),
+      estado: yup
+         .string()
+         .required('Selecione o estado em que você mora'),
+      cidade: yup
+         .string()
+         .required('Selecione a cidade em que você mora'),
+      photoReceiptResidence: yup
+         .object()
+         .required('Você precisa colocar a foto do seu comprovante de residência'),
+      password: yup
+         .string()
+         .min(6, ({ min }) => `A senha precisa ter ${min} caracteres`)
+         .required('Por favor coloque a senha!'),
+      confirmPassword: yup
+         .string()
+         .oneOf([yup.ref('password')], 'As senhas não conferem')
+         .required('Confirme sua senha'),
+   })
    
 
 	return (
@@ -76,17 +86,35 @@ const CadastroBeneficiario4 = (props) => {
 				<Text style={{fontFamily: 'Open Sans Regular', marginTop: 25, textAlign: "center" }}>Dados de Endereço</Text>
 				<View style={{marginTop: 25}}>
                <Formik
-                  //validationSchema={cadastroValidationSchema}
-                  initialValues={{ nome: '', Telefone: '', CPF: '', DataDeNascimento: ''}}
-                  onSubmit={values => {props.callback("cadastroBeneficiario2")}}
+                  validationSchema={cadastroValidationSchema}
+                  initialValues={{cep: '', endereco: '', bairro: '', estado: '', cidade: '', photoReceiptResidence: '', password: '', confirmPassword: ''}}
+                  onSubmit={
+                     values => {
+                        let z = Object.assign(props.dados, values);
+                        setShow(true);
+                        props.lock(true);
+                        helperService.createBeneficiary(z)
+                        .then((resp) => {
+                           if(resp == true){
+                              props.lock(false);
+                              props.callback("sucess");
+                              setShow(false);
+                           }else{
+                              props.lock(false);
+                              setShow(false);
+                           }
+                        })
+                     }
+                  }
                >
                {({
                   handleChange,
                   handleBlur,
                   handleSubmit,
+                  setFieldValue,
                   values,
                   errors,
-                  isValid,
+                  isValid
                      }) => (
                      <>
                      <View style={styles.input}>
@@ -97,13 +125,14 @@ const CadastroBeneficiario4 = (props) => {
                            placeholder="CEP"
                            style={{flex: 1}}
                            onChangeText={handleChange('cep')}
+                           onBlur={handleBlur('cep')}
                            maxLength={9}
                            keyboardType="numeric"
                            value={values.cep}
                         />
                      </View>  
-                     {errorCep &&
-                        <Text style={styles.erros}>{errorCep}</Text>
+                     {errors.cep &&
+                        <Text style={styles.erros}>{errors.cep}</Text>
                      }
 
                      <View style={styles.input}>
@@ -117,9 +146,9 @@ const CadastroBeneficiario4 = (props) => {
                            value={values.endereco} 
                         />
                      </View>    
-                     {/*errors.endereco &&
+                     {errors.endereco &&
                         <Text style={styles.erros}>{errors.endereco}</Text>
-                     */}
+                     }
 
                      <View style={styles.input}>
                         <TextInput
@@ -132,15 +161,15 @@ const CadastroBeneficiario4 = (props) => {
                            value={values.bairro}
                         />
                      </View>    
-                     {/*errors.bairro &&
+                     {errors.bairro &&
                         <Text style={styles.erros}>{errors.bairro}</Text>
-                     */}
+                     }
 
                      <View style={styles.picker}>
                         <Picker
                            selectedValue={selectedEstado}
                            onValueChange={(itemValue, itemIndex) => {
-                              setSelectedEstado(itemValue); procurarCidade(itemValue)
+                              setSelectedEstado(itemValue); procurarCidade(itemValue); setFieldValue('estado', itemValue)
                            }}>
                            {
                               provincias.map((item, index) => {
@@ -151,17 +180,17 @@ const CadastroBeneficiario4 = (props) => {
                            }
                         </Picker>
                      </View>    
-                     {/*errors.cidade &&
-                        <Text style={styles.erros}>{errors.cidade}</Text>
-                     */}
+                     {errors.estado &&
+                        <Text style={styles.erros}>{errors.estado}</Text>
+                     }
 
                      
                         <View style={styles.picker}>
                            <Picker
                               selectedValue={selectedCidade}
                               onValueChange={(itemValue, itemIndex) =>
-                                 setSelectedCidade(itemValue) 
-                              }>
+                                 {setSelectedCidade(itemValue); setFieldValue('cidade', itemValue)
+                              }}>
                               {
                                  cidade.map((item, index) => {
                                     return (
@@ -172,9 +201,9 @@ const CadastroBeneficiario4 = (props) => {
                            </Picker>
                         </View> 
                          
-                     {/*errors.cidade &&
+                     {errors.cidade &&
                         <Text style={styles.erros}>{errors.cidade}</Text>
-                     */}
+                     }
 
                      <View style={styles.containerIput}>
       						<Icon name="cloud-upload" size={30} color="black" />
@@ -185,19 +214,60 @@ const CadastroBeneficiario4 = (props) => {
 
                      <View style={{alignItems: "center", paddingTop: 10}}>
                         <SelectPhoto 
-                           callback={callbackFuncao} 
+                           callback={(response) => {setPhoto(response); setFieldValue('photoReceiptResidence', response)}} 
                            abrir={abrir}
                            height={200} 
                            width={300}
                            borderRadius={5}
                         />
                      </View>
+                     {errors.photoReceiptResidence &&
+                        <Text style={styles.erros}>{errors.photoReceiptResidence}</Text>
+                     }
 
-                     <TouchableOpacity style={styles.containerAdcCartao} onPress={() => props.callback("sucess")}>
-                        <Text style={styles.txtAdcCartao}>
-      							Cadastrar                          
-                        </Text>
-                     </TouchableOpacity>
+                     <View style={styles.input}>
+                        <TextInput
+                           autoCapitalize="none"
+                           name="password"
+                           placeholder="Senha"
+                           style={{flex: 1}}
+                           onChangeText={handleChange('password')}
+                           onBlur={handleBlur('password')}
+                           value={values.password} 
+                           secureTextEntry={true}
+                        />
+                     </View>    
+                     {errors.password &&
+                        <Text style={styles.erros}>{errors.password}</Text>
+                     }
+
+                     <View style={styles.input}>
+                        <TextInput
+                           autoCapitalize="none"
+                           name="confirmPassword"
+                           placeholder="Confirme a senha"
+                           style={{flex: 1}}
+                           onChangeText={handleChange('confirmPassword')}
+                           onBlur={handleBlur('confirmPassword')}
+                           value={values.confirmPassword} 
+                           secureTextEntry={true}
+                        />
+                     </View>    
+                     {errors.confirmPassword &&
+                        <Text style={styles.erros}>{errors.confirmPassword}</Text>
+                     }
+
+                     {
+                        show ? 
+                        <View style={{marginVertical: 35}}>
+                           <ActivityIndicator size="large" color="#960500"/> 
+                        </View>
+                        : <TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
+                           <Text style={styles.txtAdcCartao}>
+                              Cadastrar
+                           </Text>
+                        </TouchableOpacity> 
+                     }
                      </>
                   )}
                </Formik>
@@ -285,3 +355,24 @@ const styles = StyleSheet.create({
 })	
 
 export default CadastroBeneficiario4
+
+{/*
+    const BucarCep = (text) => {
+      setCep(text);
+      if(text.length == 9){
+         axios.get("https://viacep.com.br/ws/"+text+"/json/").then(response => {
+            if(response.data.cep == text){
+               setCep(response.data.cep), 
+               setUf(response.data.uf)
+               setLocalidade(response.data.localidade)
+               setBairro(response.data.bairro)
+               setLogradouro(response.data.logradouro)
+               setComplemento(response.data.complemento)
+               seErrorCep(false)
+            }else{
+               seErrorCep("Cep não encontrado")
+            }  
+         });
+      }
+   }
+*/}

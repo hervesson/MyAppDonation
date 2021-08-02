@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import { Formik } from 'formik'
+import * as yup from 'yup'
 import IdFrente from "../../Assets/Images/idCardFrente.svg"
 import IdVerso from "../../Assets/Images/idCardVerso.svg"
 
@@ -14,68 +15,89 @@ const CadastroBeneficiario2 = (props) => {
    const [photo, setPhoto] = useState([]);
    const [photo1, setPhoto1] = useState([])
 
-   function callbackFuncao(response){
-      setPhoto(response);
-   };
-
-   function callbackFuncao1(response){
-      setPhoto1(response);
-   };
-
+   const cadastroValidationSchema = yup.object().shape({
+      photoRgFront: yup.object().required('Você precisa colocar a foto da frente do seu RG '),
+      photoRgBack: yup.object().required('Você precisa colocar a foto de trás do seu RG'),
+   })
+   
 	return (
 		<ScrollView style={{flex: 1}}>
 			<Text style={styles.titulo}>Cadastro Beneficiário</Text>
 			<StepByStep corOne="#e9e9e9" corTwo="#960500" corThree="#e9e9e9" />
 			<Text style={{fontFamily: 'Open Sans Regular', marginTop: 25, textAlign: "center", marginBottom: 25 }}>Confirmar Dados</Text>
 
-			<View style={styles.containerIput}>
-				<Icon name="cloud-upload" size={30} color="black" />
-				<TouchableOpacity style={styles.input} onPress={() => setAbrir(abrir + 1)}>
-					<Text style={styles.placeholder}>Foto da RG ou CNH</Text>
-				</TouchableOpacity>
-			</View>	
-         <View style={{alignItems: 'center'}}> 
-            <SelectPhoto 
-               callback={callbackFuncao} 
-               abrir={abrir}
-               height={200} 
-               width={300}
-               borderRadius={5}
-               marginVertical={30}
-            />
-            {
-               photo.length == 0 ? <IdFrente width={220} height={220} /> : null
-            }
-         </View>
+         <Formik
+            validationSchema={cadastroValidationSchema}
+            initialValues={{photoRgFront: "", photoRgBack:""}}
+            onSubmit={values =>  props.callback("cadastroBeneficiario3", values)}
+            >
+            {({
+               handleSubmit,
+               setFieldValue,
+               setFieldTouched,
+               values,
+               errors,
+               isValid,
+            }) => (
+               <>
+      			<View style={styles.containerIput}>
+      				<Icon name="cloud-upload" size={30} color="black" />
+      				<TouchableOpacity style={styles.input} onPress={() => setAbrir(abrir + 1)}>
+      					<Text style={styles.placeholder}>Foto da RG ou CNH</Text>
+      				</TouchableOpacity>
+      			</View>	
+               <View style={{alignItems: 'center'}}> 
+                  <SelectPhoto 
+                     callback={(response) => {setPhoto(response); setFieldValue('photoRgFront', response )}} 
+                     abrir={abrir}
+                     height={200} 
+                     width={300}
+                     borderRadius={5}
+                     marginVertical={30}
+                  />
+                  {
+                     photo.length == 0 ? <IdFrente width={220} height={220} /> : null
+                  }
+               </View>
+               {errors.photoRgFront  &&
+                  <Text style={{fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', textAlign: "center"}}>
+                     {errors.photoRgFront}
+                  </Text>
+               }
 
-			<View style={styles.containerIput}>
-				<Icon name="cloud-upload" size={30} color="black" />
-				<TouchableOpacity style={styles.input} onPress={() => setAbrir1(abrir1 + 1)}>
-					<Text style={styles.placeholder}>Foto da RG ou CNH</Text>
-				</TouchableOpacity>
-			</View>
-         <View style={{alignItems: 'center'}}>
-            <SelectPhoto 
-               callback={callbackFuncao1} 
-               abrir={abrir1}
-               height={200} 
-               width={300}
-               borderRadius={5}
-               marginVertical={30}
-            />
-            {
-               photo1.length == 0 ? <IdVerso width={220} height={220} /> : null
-            }
-            
-         </View>
+      			<View style={styles.containerIput}>
+      				<Icon name="cloud-upload" size={30} color="black" />
+      				<TouchableOpacity style={styles.input} onPress={() => setAbrir1(abrir1 + 1)}>
+      					<Text style={styles.placeholder}>Foto da RG ou CNH</Text>
+      				</TouchableOpacity>
+      			</View>
+               <View style={{alignItems: 'center'}}>
+                  <SelectPhoto 
+                     callback={(response) => {setPhoto1(response); setFieldValue('photoRgBack', response)}}
+                     abrir={abrir1}
+                     height={200} 
+                     width={300}
+                     borderRadius={5}
+                     marginVertical={30}
+                  />
+                  {
+                     photo1.length == 0 ? <IdVerso width={220} height={220} /> : null
+                  }
+               </View>
+               {errors.photoRgBack  &&
+                  <Text style={{fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', textAlign: "center"}}>
+                     {errors.photoRgBack}
+                  </Text>
+               }
 
-
-			<TouchableOpacity style={styles.containerAdcCartao} onPress={() => props.callback("cadastroBeneficiario3")}>
-            <Text style={styles.txtAdcCartao}>
-               Proximo
-            </Text>
-         </TouchableOpacity>
-
+      			<TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
+                  <Text style={styles.txtAdcCartao}>
+                     Proximo
+                  </Text>
+               </TouchableOpacity>
+               </>
+            )}
+         </Formik>
 		</ScrollView>
 	)
 }
