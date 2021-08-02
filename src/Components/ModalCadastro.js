@@ -1,7 +1,6 @@
 import React, { useState, useEffect} from 'react'
 import { View, Text } from 'react-native'
 
-
 import CenaOne from "./CadastroModal/EscolhaUser";
 import Login from "./CadastroModal/Login"
 import Subscribe from "./CadastroModal/Subscribe"
@@ -16,15 +15,26 @@ import Sucesso from "./CadastroModal/Sucesso"
 const ModalCadastro = ( props ) => {
 	let [activeComponent, setActiveComponent] = useState();
 	let [componentName, setComponentName] = useState(props.activeCene);
+   let [dados, setDados] = useState({})
 
-	function callbackFuncao(values){
-		setComponentName(values)
+	function callbackFuncao(values, merda){
+      let z = Object.assign(dados, merda) 
+      merda ? setDados(z) : null
+      values ? setComponentName(values) : null
 	};
+
+   function callbackCena(){
+      props.mudarCena()
+   };
+
+   function callbackLock(value){
+      props.blockModal(value)
+   };
 	
 	useEffect(() => {
     	switch (componentName) {
     		case "login":
-        		setActiveComponent(<Login callback={callbackFuncao}/>);
+        		setActiveComponent(<Login cena={callbackCena} lock={callbackLock}/>);
         	break;
 
       	case "subscribe":
@@ -48,11 +58,11 @@ const ModalCadastro = ( props ) => {
          break;
 
          case "cadastroBeneficiario4":
-            setActiveComponent(<CadastroBeneficiario4 callback={callbackFuncao} />);
+            setActiveComponent(<CadastroBeneficiario4 callback={callbackFuncao} lock={callbackLock} dados={dados} />);
          break;
 
          case "cadastroDoador":
-            setActiveComponent(<CadastroDoador callback={callbackFuncao} />);
+            setActiveComponent(<CadastroDoador callback={callbackFuncao} lock={callbackLock}/>);
          break;
 
          case "sucess":
@@ -60,7 +70,7 @@ const ModalCadastro = ( props ) => {
          break;
 
       	default:
-        		setActiveComponent(<Login callback={callbackFuncao}/>);
+        		setActiveComponent(<Login cena={callbackCena} lock={callbackLock}/>);
         	break;
     	}
   	}, [componentName]);
