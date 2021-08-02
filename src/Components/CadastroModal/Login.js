@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, Image, Dimensions, TouchableOpacity } from 'react-native'
+import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, Image, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native'
 import auth from '@react-native-firebase/auth';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -7,6 +7,11 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import axios from "axios";
+import { TextInputMask } from 'react-native-masked-text'
+import { Helpers } from "../../Services/Helpers"
+
+const helperService = new Helpers();
+
 
 import Google from "../../Assets/Images/google.svg"
 import Facebook from "../../Assets/Images/facebook.svg"
@@ -15,6 +20,7 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const Login = (props) => {
+   const [show, setShow] = useState(false)
 
    useEffect(() => {
       GoogleSignin.configure({
@@ -100,11 +106,12 @@ const Login = (props) => {
       }
    }
 
+   var phoneRegEx = /(\(?\d{2}\)?\s)?(\d{5}\-\d{4})/g
    const loginValidationSchema = yup.object().shape({
-      email: yup
+      phoneNumber: yup
          .string()
-         .email("Por favor coloque um email válido!")
-         .required('O endereço de Email é requerido!'),
+         .matches(phoneRegEx, 'Coloque um número de telefone válido')
+         .required('Informe o numero do seu telefone'),
       password: yup
          .string()
          .min(6, ({ min }) => `A senha deve conter no minimo ${min} caracteres`)
@@ -126,33 +133,51 @@ const Login = (props) => {
             <View>
                <Formik
                   validationSchema={loginValidationSchema}
-                  initialValues={{ email: '', password: ''}}
-                  onSubmit={values => Logar(values)}
+                  initialValues={{ phoneNumber: '', password: ''}}
+                  onSubmit={values => {
+                     setShow(true);
+                     props.lock(true);
+                     helperService.login(values)
+                     .then((r) => {
+                        if(r == true){
+                           props.lock(false);
+                           setShow(false);
+                           props.cena();
+                        }else{
+                           props.lock(false);
+                           setShow(false)
+                        }
+                     })}
+                  }
                >
                   {({
                     handleChange,
                     handleBlur,
                     handleSubmit,
                     values,
-                    errors,
+                    errors, 
                     isValid,
                   }) => (
                     <>
                      <View style={styles.input}>
-                        <Icon name="mail-outline" size={20} color="black" />
-                        <TextInput
-                           autoCapitalize="none"
-                           name="email"
-                           placeholder="Endereço de Email"
+                        <Icon name="call-outline" size={20} color="black" />
+                        <TextInputMask
+                           type={'cel-phone'}
+                           options={{
+                              maskType: 'BRL',
+                              withDDD: true,
+                              dddMask: '(99) '
+                           }}
+                           name="phoneNumber"
+                           placeholder="Telefone"
                            style={{flex: 1}}
-                           onChangeText={handleChange('email')}
-                           onBlur={handleBlur('email')}
-                           value={values.email}
-                           keyboardType="email-address"
+                           onChangeText={handleChange('phoneNumber')}
+                           onBlur={handleBlur('phoneNumber')}
+                           value={values.phoneNumber}
                         />
                      </View>   
-                     {errors.email &&
-                        <Text style={{ fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', paddingLeft:10 }}>{errors.email}</Text>
+                     {errors.phoneNumber &&
+                        <Text style={{ fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', paddingLeft:10 }}>{errors.phoneNumber}</Text>
                      }
                      <View style={styles.input}>
                         <Icon name="lock-closed-outline" size={20} color="black" />
@@ -171,32 +196,39 @@ const Login = (props) => {
                         <Text style={{ fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', paddingLeft:10 }}>{errors.password}</Text>
                      }
                      
-                     <TouchableOpacity onPress={() => props.callback("recuperarSenha")}>
+                     <TouchableOpacity onPress={() => null}>
                      <Text style={styles.forgot}>Esqueceu sua senha?</Text>
                      </TouchableOpacity>
 
-                     <TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
-                        <Text style={styles.txtAdcCartao}>
-                           Entrar
-                        </Text>
-                     </TouchableOpacity>
+                     {
+                        show ?
+                           <View style={{marginTop: 15}}>
+                              <ActivityIndicator size="large" color="#960500"/> 
+                           </View> 
+                        :
+                           <TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
+                              <Text style={styles.txtAdcCartao}>
+                                 Entrar
+                              </Text>
+                           </TouchableOpacity>
+                     }
 
                     </>
                   )}
                </Formik>
             </View>
-
-            <Text style={{alignSelf: "center", fontFamily: "Open Sans Bold", fontSize: 12, paddingTop: 10, color:"#666" }}>
+            {/*
+               <Text style={{alignSelf: "center", fontFamily: "Open Sans Bold", fontSize: 12, paddingTop: 10, color:"#666" }}>
                Ou entre com:
-            </Text>
+               </Text>
 
-            <View style={{flexDirection: 'row', justifyContent: "center" }}>
-               <View style={styles.containerSociais}>
-                  <Facebook width={40} height={40} fill="#000" />
-               </View>
-               <View style={styles.containerSociais}>
-                  <Google width={40} height={40} fill="red" />
-               </View>
+               <View style={{flexDirection: 'row', justifyContent: "center" }}>
+                  <View style={styles.containerSociais}>
+                     <Facebook width={40} height={40} fill="#000" />
+                  </View>
+                  <View style={styles.containerSociais}>
+                     <Google width={40} height={40} fill="red" />
+                  </View>
             </View>
 
             {/*<TouchableOpacity style={styles.containerFace} onPress={() => {onFacebookButtonPress().then(e => {criarCustomer(e)}) }}>
@@ -213,9 +245,9 @@ const Login = (props) => {
                </Text>
             </TouchableOpacity>*/}  
 
-            <TouchableOpacity onPress={() => props.callback("subscribe")}>
+            {/*<TouchableOpacity onPress={() => props.callback("subscribe")}>
                <Text style={styles.forgot}>Ainda não tem cadastro? Faça Aqui!</Text>
-            </TouchableOpacity> 
+            </TouchableOpacity> /*}
 
          {/*<Button title="Logar" color="green" onPress={() => {Logar()}}/>
             <Text>
