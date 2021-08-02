@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, Button } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Formik } from 'formik'
 import * as yup from 'yup'
@@ -12,6 +12,7 @@ const helperService = new Helpers();
 const CadastroDoador = (props) => {
    const [abrir, setAbrir] = useState(0);
    const [photo, setPhoto] = useState([]);
+   const [show, setShow] = useState(false)
 
    var phoneRegEx = /(\(?\d{2}\)?\s)?(\d{5}\-\d{4})/g
    const cadastroValidationSchema = yup.object().shape({
@@ -40,8 +41,24 @@ const CadastroDoador = (props) => {
 			<View style={{marginTop: 25}}>
             <Formik
                validationSchema={cadastroValidationSchema}
-               initialValues={{fullName: '', phoneNumber: '', password: '', confirmPassword: ''}}
-               onSubmit={values => helperService.createDonator(photo, values)}
+               initialValues={{photo: '', fullName: '', phoneNumber: '', password: '', confirmPassword: ''}}
+               onSubmit={
+                  values => {
+                     setShow(true);
+                     props.lock(true);
+                     helperService.createDonator(values)
+                     .then((resp) => {
+                        if(resp == true){
+                           props.lock(false);
+                           props.callback("sucess");
+                           setShow(false);
+                        }else{
+                           props.lock(false);
+                           setShow(false);
+                        }
+                     })
+                  }
+               }
             >
             {({
                handleChange,
@@ -141,13 +158,17 @@ const CadastroDoador = (props) => {
                      {errors.confirmPassword &&
                         <Text style={styles.erros}>{errors.confirmPassword}</Text>
                      }
-
-                     <TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
-                        <Text style={styles.txtAdcCartao}>
-                           Cadastrar
-                        </Text>
-                     </TouchableOpacity>
-
+                     {
+                        show ? 
+                        <View style={{marginVertical: 35}}>
+                           <ActivityIndicator size="large" color="#960500"/> 
+                        </View>
+                        : <TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
+                           <Text style={styles.txtAdcCartao}>
+                              Cadastrar
+                           </Text>
+                        </TouchableOpacity> 
+                     }
                     </>
                   )}
                </Formik>
@@ -197,7 +218,6 @@ const styles = StyleSheet.create({
       borderRadius: 80,
       backgroundColor: "#960500",
       alignSelf: 'center',
-      marginVertical: 10,
       marginVertical: 25,
 
    },
