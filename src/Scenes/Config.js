@@ -2,28 +2,21 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, Image, StyleSheet, ScrollView, TextInput, Switch, TouchableOpacity, Alert } from 'react-native'
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Helpers } from "../Services/Helpers"
 
-const Config = () => {
+const helperService = new Helpers();
+
+const Config = ({ navigation }) => {
 	const [user, setUser] = useState([]);
    const [isEnabled, setIsEnabled] = useState(false);
    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
 	useEffect(() => {
-      var user = auth().currentUser;
-      var name, email, photoUrl, uid, emailVerified;
-
-      if (user != null) {
-        name = user.displayName;
-        email = user.email;
-        photoUrl = user.photoURL;
-        emailVerified = user.emailVerified;
-        uid = user.uid; 
-      }
-      setUser(user)
+      buscarUser()
    }, [])
 
-   function SignOut(argument) {
-      auth().signOut().then(() => console.log('User signed out!'));
+   function buscarUser(){
+      helperService.findUser().then((resp) => {setUser(resp.data)})
    }
 
    const createThreeButtonAlert = () =>
@@ -43,23 +36,23 @@ const Config = () => {
 	return (
 		<ScrollView style={{flex: 1}}>
          <View style={styles.containerAvatar}>
-         <Text style={styles.titulo}>   
+            <Text style={styles.titulo}>   
                Foto de Perfil
             </Text>
    			<Image style={styles.avatar}
-               source={{uri: user.photoURL}}
-               resizeMode="contain"
+               source={{uri: 'https://semfome.api.7clicks.dev/uploads/avatar/'+user.avatar}}
+               //resizeMode="contain"
             />
          </View>
          <View style={styles.containerInformacoes}>
             <Text style={styles.titulo}>   
-               Nome de Usuário
+               Nome de Usuário:
             </Text>
             <Text style={styles.descricao}>
-               {user.displayName}
+               {user.name}
             </Text>
             <Text style={styles.titulo}>   
-               Email:
+               Telefone:
             </Text>
             <Text style={styles.descricao}>
                {user.email}
@@ -77,13 +70,19 @@ const Config = () => {
                value={isEnabled}
             />
          </View>   
-         <TouchableOpacity style={styles.itemMenu} onPress={() => createThreeButtonAlert()}>
+         {/*<TouchableOpacity style={styles.itemMenu} onPress={() => createThreeButtonAlert()}>
             <Icon name="close-circle-outline" size={30} color="#F7344B" />
             <Text style={styles.textMenu}>
               Excluir conta
             </Text>
-         </TouchableOpacity>
-         <TouchableOpacity style={styles.itemMenu} onPress={() => SignOut()}>
+         </TouchableOpacity>*/}
+         <TouchableOpacity style={styles.itemMenu} 
+            onPress={() => helperService.SignOut().then((r) => {
+               if(r == true){
+                  navigation.navigate('AwesomePage', { itemId: true })}
+               }
+            )}
+         >
             <Icon name="log-out-outline" size={30} color="#F7344B" />
             <Text style={styles.textMenu}>
               Sair
@@ -95,19 +94,19 @@ const Config = () => {
 
 const styles = StyleSheet.create({
    avatar: {
-      height: 55, 
-      width: 55, 
-      borderRadius:45, 
+      height: 130, 
+      width: 130, 
+      borderRadius:65, 
    },
    containerAvatar: {
-      height: 100,
+      height: 200,
       justifyContent: "center",
       alignItems: "center"
    },
    titulo:{
       fontFamily: 'Open Sans Light',
       fontSize: 13,
-      paddingTop: 20
+      paddingTop: 10
    },
    descricao: {
       fontFamily: 'Open Sans Regular',
