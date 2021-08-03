@@ -4,7 +4,7 @@ import axios from "axios";
 // http://localhost:3000
 
 const api = axios.create({
-  baseURL: "http://192.168.1.107:80/api",
+  baseURL: "https://semfome.api.7clicks.dev/api",
   responseType: 'json'
 });
 
