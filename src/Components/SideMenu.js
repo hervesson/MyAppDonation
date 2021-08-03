@@ -1,31 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import {  DrawerActions } from '@react-navigation/native';
-import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/Ionicons';
-import auth from '@react-native-firebase/auth';
-
+import { Helpers } from "../Services/Helpers"
 import User from "../Assets/Images/avatar.svg"
+const helperService = new Helpers();
 
 function CustomDrawerContent({props, navigation}) {
    const [user, setUser] = useState([]);
 
    useEffect(() => {
-      var user = auth().currentUser;
-      var name, email, photoUrl, uid, emailVerified;
-
-      if (user != null) {
-        name = user.displayName;
-        email = user.email;
-        photoUrl = user.photoURL;
-        emailVerified = user.emailVerified;
-        uid = user.uid; 
-      }
-      setUser(user)
-   }, [])
-
-   function SignOut(argument) {
-      auth().signOut().then(() => console.log('User signed out!'));
+      buscarUser()
+   }, []);
+  
+   function buscarUser(){
+      helperService.findUser().then((resp) => {setUser(resp.data)})
    }
 
    return (
@@ -36,7 +26,7 @@ function CustomDrawerContent({props, navigation}) {
             {
                user ? 
                   <Image style={styles.avatar}
-                     source={{uri: user.photoURL}}
+                     source={{uri: 'https://semfome.api.7clicks.dev/uploads/avatar/'+user.avatar}}
                   />
                : 
                   <View style={{marginLeft: 10}}>
@@ -46,7 +36,7 @@ function CustomDrawerContent({props, navigation}) {
                
                <View style={styles.infomacoesAvatar}>
                {
-                  user ? <Text style={styles.textAvatar}>{user.displayName}</Text> : <Text style={styles.textAvatar}>Usuário</Text>
+                  user ? <Text style={styles.textAvatar}>{user.name}</Text> : <Text style={styles.textAvatar}>Usuário</Text>
                }
                   
                   {/*<Text style={styles.textAvatar}>São luis - MA</Text>*/}
