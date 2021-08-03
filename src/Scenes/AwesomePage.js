@@ -5,23 +5,29 @@ import {  DrawerActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ButtonDoacao from "../Components/ButtonDoacao"
 import CadastroRoutes from "../Components/ModalCadastro"
-import auth from '@react-native-firebase/auth';
-
 import Reactotron from 'reactotron-react-native'
 import api from "../Services/Api"
-
+import { Helpers } from "../Services/Helpers"
 import User from "../Assets/Images/avatar.svg"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const AwesomePage = ({ navigation }) => {
+const helperService = new Helpers();
+
+const AwesomePage = ({route,  navigation }) => {
 	const [user, setUser] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [activeCene, setActiveCene] = useState("");
-	const [usuario, setUsuario] = useState(false);
 	const [noticias, setNoticias] = useState([]);
-	const [eventos, setEventos] = useState([])
+	const [eventos, setEventos] = useState([]);
+	const [blockModal, setblockModal] = useState(false);
+	const itemId = route.params;
+
+	useEffect(() => {
+		buscarUser()
+	}, [itemId])
 
 	useEffect(() => {
 		api.get('/posts').then((response) => {
@@ -34,7 +40,11 @@ const AwesomePage = ({ navigation }) => {
     	}).catch(function (error) {
          console.log(error);
       }); 
-	}, [])
+	}, []);
+
+	function buscarUser(){
+		helperService.findUser().then((resp) => resp ? setUser(resp.data) : setUser(false))
+	}
 
 	const DOACOES = [
 	  	{
@@ -57,6 +67,14 @@ const AwesomePage = ({ navigation }) => {
 		setModalVisible(true)
 	}
 
+	function callbackCena(){
+		setModalVisible(false);
+		buscarUser()
+	}
+
+	function callbackModal(value){
+		setblockModal(value)
+	}
 
    const renderAgenda = ({item, index}) => {
 		return (
@@ -85,7 +103,7 @@ const AwesomePage = ({ navigation }) => {
 
 	function renderDoacoes(){
 		return DOACOES.map((item, index) => 
-			<View style={styles.containerDoacao}>
+			<View style={styles.containerDoacao} key={index}>
 				<View style={{flex:1, alignItems: "flex-start", justifyContent: "center", marginLeft: 20}}>
 					<Text style={{fontFamily: "Open Sans Regular"}}>{item.titulo}</Text>
 				</View>
@@ -97,24 +115,32 @@ const AwesomePage = ({ navigation }) => {
 		)
 	}
 	
+	const removeValue = async () => {
+		try {
+		   await AsyncStorage.removeItem('acess_token')
+		} catch(e) {
+		   // remove error
+		}
+		console.log('Done.')
+	}
+	
 	return (
 		<View style={{flex: 1}}>
 		<ScrollView style={{flex:1, backgroundColor: '#FFF'}}>
-
 			<View style={{flexDirection: 'row', height: 70}}>
-
+				{/*<Button onPress={() => removeValue()}  title="remove"/> */}
 				<View style={{flex: 1, justifyContent: "center"}}>
 					<TouchableOpacity style={{marginLeft: 5}} onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
 						<Icon name="menu" size={33} color="black" />
 					</TouchableOpacity>
 				</View>
 
-				<TouchableOpacity style={styles.containerSearchBar} onPress={() => AbrirModal("logar")}>
-					<Text style={styles.txtPrincipal}>Entrar</Text>
+				<TouchableOpacity style={styles.containerSearchBar} onPress={() => {user ? null : AbrirModal("login")}}>
+					<Text style={styles.txtPrincipal}>{user ? user.name : "Entrar"}</Text>
 					{
 						user ?
 							<Image style={styles.avatar}
-	               		source={{uri: user.photoURL }}
+	               		source={{uri: 'https://semfome.api.7clicks.dev/uploads/avatar/'+user.avatar }}
 	            		/>
 	            	:
 	            		<User width={40} height={40} fill="#000" />	
@@ -123,14 +149,14 @@ const AwesomePage = ({ navigation }) => {
 	    	</View>
 
 	    	{	
-	    		usuario == false ?
+	    		user == false ?
 		    		<View>
 			    		<ImageBackground source={require("../Assets/Images/BannerRecebedor.jpeg")} style={styles.auxilio}>
 				    		<Text style={styles.txtChamada}>
 				    			Precisando de auxílio ?
 				    		</Text>
 				    		<TouchableOpacity style={{height: 30, backgroundColor: "#fbb600", width: 100, justifyContent: "center", alignItems: "center", borderRadius: 30  }}
-				    			onPress={() => AbrirModal("cadastroBeneficiario4")}>
+				    			onPress={() => AbrirModal("cadastroBeneficiario1")}>
 					    		<Text style={{fontFamily: "Open Sans SemiBold", fontSize: 14, color: "white"}}>
 					    			Cadastre-se
 					    		</Text>
@@ -149,7 +175,7 @@ const AwesomePage = ({ navigation }) => {
 				         </TouchableOpacity>
 				      </ImageBackground>
 				   </View>  
-			   : usuario == "beneficiario" ? 
+			   : user?.role == "beneficiary" ? 
 			   	<View>
 				   	<ImageBackground source={require("../Assets/Images/BannerRecebedor.jpeg")} style={styles.auxilio}>
 					    	<Text style={styles.txtChamada}>
@@ -165,14 +191,14 @@ const AwesomePage = ({ navigation }) => {
 					   <Text style={styles.txtPrincipal}>Últimas doações recebidas</Text>
 				   	{renderDoacoes()}
 				   </View>
-			   : usuario == "doador" ? 
+			   : user?.role == "donator" ? 
 			   	<View>
 				    	<ImageBackground source={require('../Assets/Images/BannerDoador.jpeg')} style={styles.auxilio}>
 						   <Text style={styles.txtChamada}>
 				    			Ajude uma família!
 				    		</Text>
 				    		<TouchableOpacity style={{height: 30, backgroundColor: "#960500", width: 120, justifyContent: "center", alignItems: "center", borderRadius: 30 }}
-				    			onPress={() => AbrirModal("cadastroDoador")}>
+				    			onPress={() => callbackFuncao()}>
 					    		<Text style={{fontFamily: "Open Sans SemiBold", fontSize: 14, color: "white"}}>
 					    			Doar agora
 					    		</Text>
@@ -187,8 +213,6 @@ const AwesomePage = ({ navigation }) => {
 				: null
 	    	}
 
-		    	
-	         
          <TouchableOpacity style={styles.titulo} onPress={() => navigation.navigate("ListAgenda", {doacao: false})}>
          	<Text style={styles.textTitulo}>Eventos</Text>
          	<Icon name="chevron-forward-outline" size={23} color="black" />
@@ -222,13 +246,19 @@ const AwesomePage = ({ navigation }) => {
 	        	transparent={true}
 	        	visible={modalVisible}
 	        	onRequestClose={() => {
-	          	//Alert.alert("Modal has been closed.");
-	          	setModalVisible(!modalVisible);
-	        	}}
+	        		if(blockModal == false){
+	        			buscarUser();
+	          		setModalVisible(!modalVisible);
+	          	}
+	         }} 	
       	>
 	        	<View style={styles.centeredView}>
           		<View style={styles.modalView}>
-		         	<CadastroRoutes activeCene={activeCene}/>
+		         	<CadastroRoutes 
+		         		activeCene={activeCene} 
+		         		mudarCena={callbackCena} 
+		         		blockModal={callbackModal} 
+		         	/>
 		      	</View>
 		      </View>
       	</Modal>
