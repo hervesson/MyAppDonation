@@ -9,6 +9,8 @@ import CadastroBeneficiario1 from "./CadastroModal/CadastroBeneficiario1"
 import CadastroBeneficiario2 from "./CadastroModal/CadastroBeneficiario2"
 import CadastroBeneficiario3 from "./CadastroModal/CadastroBeneficiario3"
 import CadastroBeneficiario4 from "./CadastroModal/CadastroBeneficiario4"
+import CadastroBeneficiario5 from "./CadastroModal/CadastroBeneficiario5"
+
 import CadastroDoador from "./CadastroModal/CadastroDoador"
 import Sucesso from "./CadastroModal/Sucesso"
 
@@ -58,7 +60,11 @@ const ModalCadastro = ( props ) => {
          break;
 
          case "cadastroBeneficiario4":
-            setActiveComponent(<CadastroBeneficiario4 callback={callbackFuncao} lock={callbackLock} dados={dados} />);
+            setActiveComponent(<CadastroBeneficiario4 callback={callbackFuncao} />);
+         break;
+
+         case "cadastroBeneficiario5":
+            setActiveComponent(<CadastroBeneficiario5 callback={callbackFuncao} lock={callbackLock} dados={dados} />);
          break;
 
          case "cadastroDoador":

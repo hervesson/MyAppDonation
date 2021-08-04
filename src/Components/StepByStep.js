@@ -46,6 +46,20 @@ const StepByStep = (props) => {
 					3
 				</Text>
 			</View>
+			<View style={styles.separador} />
+			<View 
+				style={{height: 30, 
+					width: 30, 
+					borderColor: props.corFour, 
+					borderWidth: 2, 
+					justifyContent: "center", 
+					alignItems: "center", 
+					borderRadius: 20
+				}}>
+				<Text>
+					4
+				</Text>
+			</View>
 		</View>
 		</>
 	)
@@ -55,7 +69,7 @@ const styles = StyleSheet.create({
 	separador: {
 		borderWidth: 0.5, 
 		borderColor: '#A1A5AA', 
-		width:70,
+		width: 25,
 		marginHorizontal: 10
 	}
 })
