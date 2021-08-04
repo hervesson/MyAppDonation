@@ -42,8 +42,13 @@ const CadastroBeneficiario2 = (props) => {
                <>
       			<View style={styles.containerIput}>
       				<Icon name="cloud-upload" size={30} color="black" />
-      				<TouchableOpacity style={styles.input} onPress={() => setAbrir(abrir + 1)}>
-      					<Text style={styles.placeholder}>Foto da RG ou CNH</Text>
+      				<TouchableOpacity style={[styles.input, {backgroundColor: photo.length !== 0 ? "#74C971" : "white"}]} onPress={() => setAbrir(abrir + 1)}>
+                     {
+                        photo.length !== 0 ? 
+                        <Text style={styles.fotoEnviada}>Foto enviada!</Text>
+                        : 
+      					   <Text style={styles.placeholder}>Foto da frente do seu RG ou CNH</Text>
+                     }
       				</TouchableOpacity>
       			</View>	
                <View style={{alignItems: 'center'}}> 
@@ -68,8 +73,13 @@ const CadastroBeneficiario2 = (props) => {
 
       			<View style={styles.containerIput}>
       				<Icon name="cloud-upload" size={30} color="black" />
-      				<TouchableOpacity style={styles.input} onPress={() => setAbrir1(abrir1 + 1)}>
-      					<Text style={styles.placeholder}>Foto da RG ou CNH</Text>
+      				<TouchableOpacity style={[styles.input, {backgroundColor: photo1.length !== 0 ? "#74C971" : "white"}]} onPress={() => setAbrir1(abrir1 + 1)}>
+      					{
+                        photo1.length !== 0 ? 
+                        <Text style={styles.fotoEnviada}>Foto enviada!</Text>
+                        : 
+                        <Text style={styles.placeholder}>Foto de trás do seu RG ou CNH</Text>
+                     }
       				</TouchableOpacity>
       			</View>
                <View style={{alignItems: 'center'}}>
@@ -117,9 +127,8 @@ const styles = StyleSheet.create({
       paddingLeft: 10,
       alignItems: "center",
       marginHorizontal: 12,
-      borderWidth: 0.1,
-      borderRadius: 6,
-      borderColor: '#707070',
+      borderWidth: 0.2,
+      borderRadius: 30,
       flex: 1
    },
    placeholder: {
@@ -127,10 +136,16 @@ const styles = StyleSheet.create({
    	fontFamily: 'Open Sans Regular',
    	fontSize: 14
    },
+   fotoEnviada:{
+      color:"black",
+      fontFamily: 'Open Sans Italic',
+      fontSize: 14
+   },
    containerIput:{
    	flexDirection: "row",
    	alignItems: "center",
    	marginLeft:10,
+      marginTop: 20
    },
    containerAdcCartao: {
       justifyContent: "center",
@@ -140,7 +155,7 @@ const styles = StyleSheet.create({
       borderRadius: 80,
       backgroundColor: "#960500",
       alignSelf: 'center',
-      marginBottom: 25
+      marginVertical: 25
 
    },
    txtAdcCartao:{
