@@ -44,6 +44,8 @@ const CadastroBeneficiario3 = (props) => {
 		               width={300}
 		               borderRadius={5}
 		               marginVertical={30}
+		               camera={true}
+		               render={true}
 		            />
 		            {
 		               photo.length == 0 ? 

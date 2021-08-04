@@ -194,43 +194,13 @@ const CadastroBeneficiario4 = (props) => {
                            height={200} 
                            width={300}
                            borderRadius={5}
+                           render={true}
                         />
                      </View>
                      {errors.photoReceiptResidence &&
                         <Text style={styles.erros}>{errors.photoReceiptResidence}</Text>
                      }
 
-                     <View style={styles.input}>
-                        <TextInput
-                           autoCapitalize="none"
-                           name="password"
-                           placeholder="Senha"
-                           style={{flex: 1}}
-                           onChangeText={handleChange('password')}
-                           onBlur={handleBlur('password')}
-                           value={values.password} 
-                           secureTextEntry={true}
-                        />
-                     </View>    
-                     {errors.password &&
-                        <Text style={styles.erros}>{errors.password}</Text>
-                     }
-
-                     <View style={styles.input}>
-                        <TextInput
-                           autoCapitalize="none"
-                           name="confirmPassword"
-                           placeholder="Confirme a senha"
-                           style={{flex: 1}}
-                           onChangeText={handleChange('confirmPassword')}
-                           onBlur={handleBlur('confirmPassword')}
-                           value={values.confirmPassword} 
-                           secureTextEntry={true}
-                        />
-                     </View>    
-                     {errors.confirmPassword &&
-                        <Text style={styles.erros}>{errors.confirmPassword}</Text>
-                     }
 
                      {
                         show ? 

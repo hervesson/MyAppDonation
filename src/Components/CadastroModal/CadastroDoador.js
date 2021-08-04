@@ -79,6 +79,7 @@ const CadastroDoador = (props) => {
                               height={130} 
                               width={130}
                               borderRadius={65}
+                              render={true}
                            /> 
                            {
                               photo.length == 0 ? <Icon name="camera" size={35} color="black" /> : null

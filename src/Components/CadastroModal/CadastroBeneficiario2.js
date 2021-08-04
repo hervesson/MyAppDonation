@@ -54,10 +54,11 @@ const CadastroBeneficiario2 = (props) => {
                      width={300}
                      borderRadius={5}
                      marginVertical={30}
+                     render={false}
                   />
-                  {
+                  {/*
                      photo.length == 0 ? <IdFrente width={220} height={220} /> : null
-                  }
+                  */}
                </View>
                {errors.photoRgFront  &&
                   <Text style={{fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', textAlign: "center"}}>
@@ -79,10 +80,11 @@ const CadastroBeneficiario2 = (props) => {
                      width={300}
                      borderRadius={5}
                      marginVertical={30}
+                     render={false}
                   />
-                  {
+                  {/*
                      photo1.length == 0 ? <IdVerso width={220} height={220} /> : null
-                  }
+                  */}
                </View>
                {errors.photoRgBack  &&
                   <Text style={{fontSize: 10, color: 'red', fontFamily: 'Open Sans Regular', textAlign: "center"}}>

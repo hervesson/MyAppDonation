@@ -88,6 +88,7 @@ const CadastroBeneficiario1 = (props) => {
                               height={130} 
                               width={130}
                               borderRadius={65}
+                              render={true}
                            /> 
                            {
                               photo.length == 0 ? <Icon name="camera" size={35} color="black" /> : null
@@ -179,7 +180,7 @@ const CadastroBeneficiario1 = (props) => {
 
                      <TouchableOpacity style={styles.containerAdcCartao} onPress={handleSubmit} disabled={!isValid}>
                         <Text style={styles.txtAdcCartao}>
-                           Proximo
+                           Próximo
                         </Text>
                      </TouchableOpacity>
 
