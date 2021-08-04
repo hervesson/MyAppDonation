@@ -7,7 +7,7 @@ const SelectPhoto = (props) => {
 
 	useEffect(() => {
 		if(props.abrir > 0){
-			selecionarEntrada();
+			props.camera ? captureImage('photo') : selecionarEntrada();
 		}
 	}, [props.abrir])
 
@@ -82,7 +82,7 @@ const SelectPhoto = (props) => {
       if (isCameraPermitted && isStoragePermitted) {
       ImagePicker.launchCamera(options, (response) => {
          console.log('Response = ', response);
-         props.callback(response?.assets[0]);
+         response?.assets ? props.callback(response?.assets[0]) : null 
 
          if (response.didCancel) {
             alert('User cancelled camera picker');
@@ -112,7 +112,7 @@ const SelectPhoto = (props) => {
       };
       ImagePicker.launchImageLibrary(options, (response) => {
          console.log('Response = ', response);
-         props.callback(response?.assets[0]);
+         response?.assets ? props.callback(response?.assets[0]) : null 
 
          if (response.didCancel) {
             alert('User cancelled camera picker');
@@ -131,8 +131,8 @@ const SelectPhoto = (props) => {
       });
    };
 
-
-	return (
+   
+	return props.render ? (
 		<View>
 			{
 				filePath?.assets ?
@@ -153,7 +153,7 @@ const SelectPhoto = (props) => {
 				null
 			}
 		</View>
-	)
+	) : null
 }
 
 export default SelectPhoto
