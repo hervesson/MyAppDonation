@@ -67,14 +67,6 @@ const CadastroBeneficiario4 = (props) => {
       photoReceiptResidence: yup
          .object()
          .required('Você precisa colocar a foto do seu comprovante de residência'),
-      password: yup
-         .string()
-         .min(6, ({ min }) => `A senha precisa ter ${min} caracteres`)
-         .required('Por favor coloque a senha!'),
-      confirmPassword: yup
-         .string()
-         .oneOf([yup.ref('password')], 'As senhas não conferem')
-         .required('Confirme sua senha'),
    })
    
 
@@ -82,30 +74,13 @@ const CadastroBeneficiario4 = (props) => {
 		<ScrollView style={{flex: 1}}>
 			<View style={{flex: 1}}>
 				<Text style={styles.titulo}>Cadastro Beneficiário</Text>
-				<StepByStep corOne="#e9e9e9" corTwo="#e9e9e9" corThree="#960500" />
+				<StepByStep corOne="#e9e9e9" corTwo="#e9e9e9" corThree="#960500" corFour="#e9e9e9"/>
 				<Text style={{fontFamily: 'Open Sans Regular', marginTop: 25, textAlign: "center" }}>Dados de Endereço</Text>
 				<View style={{marginTop: 25}}>
                <Formik
                   validationSchema={cadastroValidationSchema}
-                  initialValues={{cep: '', endereco: '', bairro: '', estado: '', cidade: '', photoReceiptResidence: '', password: '', confirmPassword: ''}}
-                  onSubmit={
-                     values => {
-                        let z = Object.assign(props.dados, values);
-                        setShow(true);
-                        props.lock(true);
-                        helperService.createBeneficiary(z)
-                        .then((resp) => {
-                           if(resp == true){
-                              props.lock(false);
-                              props.callback("sucess");
-                              setShow(false);
-                           }else{
-                              props.lock(false);
-                              setShow(false);
-                           }
-                        })
-                     }
-                  }
+                  initialValues={{cep: '', endereco: '', bairro: '', estado: '', cidade: '', photoReceiptResidence: ''}}
+                  onSubmit={values => props.callback("cadastroBeneficiario5", values)}
                >
                {({
                   handleChange,

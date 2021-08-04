@@ -18,7 +18,7 @@ const CadastroBeneficiario3 = (props) => {
 		<View style={{flex: 1}}>
 			<View style={{flex: 1}}>
 				<Text style={styles.titulo}>Cadastro Beneficiário</Text>
-				<StepByStep corOne="#e9e9e9" corTwo="#960500" corThree="#e9e9e9" />
+				<StepByStep corOne="#e9e9e9" corTwo="#960500" corThree="#e9e9e9" corFour="#e9e9e9" />
 				<Text style={{fontFamily: 'Open Sans Regular', marginTop: 25, textAlign: "center" }}>Confirmar Dados</Text>
 			</View>
 			<View style={{flex:3, alignItems: "center"}}>

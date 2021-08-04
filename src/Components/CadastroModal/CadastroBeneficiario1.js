@@ -60,7 +60,7 @@ const CadastroBeneficiario1 = (props) => {
 	return (
 		<ScrollView style={{flex: 1}}>
 			<Text style={styles.titulo}>Cadastro Beneficiário</Text>
-			<StepByStep corOne="#960500" corTwo="#e9e9e9" corThree="#e9e9e9" />
+			<StepByStep corOne="#960500" corTwo="#e9e9e9" corThree="#e9e9e9" corFour="#e9e9e9" />
 			<View>
             <Formik
                validationSchema={cadastroValidationSchema}

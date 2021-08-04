@@ -23,7 +23,7 @@ const CadastroBeneficiario2 = (props) => {
 	return (
 		<ScrollView style={{flex: 1}}>
 			<Text style={styles.titulo}>Cadastro Beneficiário</Text>
-			<StepByStep corOne="#e9e9e9" corTwo="#960500" corThree="#e9e9e9" />
+			<StepByStep corOne="#e9e9e9" corTwo="#960500" corThree="#e9e9e9" corFour="#e9e9e9"/>
 			<Text style={{fontFamily: 'Open Sans Regular', marginTop: 25, textAlign: "center", marginBottom: 25 }}>Confirmar Dados</Text>
 
          <Formik
